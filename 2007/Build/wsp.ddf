@@ -1,0 +1,22 @@
+.OPTION EXPLICIT ; Generate errors 
+.Set CabinetNameTemplate= BrickRed.WebParts.Twitter.wsp     
+.Set DiskDirectoryTemplate=CDROM ; All cabinets go in single directory
+.Set CompressionType=MSZIP ; All files compressed in cabinet files
+.Set UniqueFiles="ON"
+.Set Cabinet=on
+.Set DiskDirectory1="."
+
+manifest.xml manifest.xml
+BrickRed.WebParts.Twitter\feature.xml BrickRed.WebParts.Twitter\feature.xml
+BrickRed.WebParts.Twitter\BrickRedFeatureLogo.png IMAGES\BrickRed\BrickRedFeatureLogo.png
+BrickRed.WebParts.Twitter.dll BrickRed.WebParts.Twitter.dll
+Twitterizer2.dll Twitterizer2.dll
+
+BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.webpart BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.webpart
+BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.xml BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.xml
+
+BrickRed.WebParts.Twitter\Tweet\Tweet.webpart BrickRed.WebParts.Twitter\Tweet\Tweet.webpart
+BrickRed.WebParts.Twitter\Tweet\Tweet.xml BrickRed.WebParts.Twitter\Tweet\Tweet.xml
+
+
+

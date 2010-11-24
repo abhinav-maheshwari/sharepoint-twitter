@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Feature Id="8512fd7d-17ac-4e08-90d5-93acb9ace0ec" Title="BrickRed Twitter WebParts" 
+         Scope="Web" Version="1.0.0.0" Hidden="FALSE" Description="Activates twitter show tweets and tweet webparts" ImageUrl="/BrickRed/BrickRedFeatureLogo.png" DefaultResourceFile="core" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <ElementManifests>
+    <ElementManifest Location="Tweet\Tweet.xml" />
+    <ElementFile Location="Tweet\Tweet.webpart" />
+
+    <ElementManifest Location="ShowTweets\ShowTweets.xml" />
+    <ElementFile Location="ShowTweets\ShowTweets.webpart" />
+  </ElementManifests>
+
+  
+</Feature>
