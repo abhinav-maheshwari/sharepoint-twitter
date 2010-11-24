@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution SolutionId="9a9cf416-e7a6-44cc-a0c9-974b2b4a0945" xmlns="http://schemas.microsoft.com/sharepoint/">
+  <FeatureManifests>
+    <FeatureManifest Location="BrickRed.WebParts.Twitter\feature.xml"  />
+  </FeatureManifests>
+  <Assemblies>
+    <Assembly Location="BrickRed.WebParts.Twitter.dll" DeploymentTarget="WebApplication">
+      <SafeControls>
+        <SafeControl Assembly="BrickRed.WebParts.Twitter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f4da00116c38ec5" Namespace="BrickRed.WebParts.Twitter" TypeName="*" Safe="True" />
+      </SafeControls>
+    </Assembly>
+    <Assembly Location="Twitterizer2.dll" DeploymentTarget="WebApplication">
+    </Assembly>
+  </Assemblies>
+  <TemplateFiles>
+    <TemplateFile Location="IMAGES\BrickRed\BrickRedFeatureLogo.png"></TemplateFile>
+  </TemplateFiles>
+</Solution>
