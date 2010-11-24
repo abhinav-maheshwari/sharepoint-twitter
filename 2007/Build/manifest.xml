@@ -4,7 +4,7 @@
     <FeatureManifest Location="BrickRed.WebParts.Twitter\feature.xml"  />
   </FeatureManifests>
   <Assemblies>
-    <Assembly Location="BrickRed.WebParts.Twitter.dll" DeploymentTarget="WebApplication">
+    <Assembly Location="BrickRed.WebParts.Twitter.dll" DeploymentTarget="GlobalAssemblyCache">
       <SafeControls>
         <SafeControl Assembly="BrickRed.WebParts.Twitter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f4da00116c38ec5" Namespace="BrickRed.WebParts.Twitter" TypeName="*" Safe="True" />
       </SafeControls>

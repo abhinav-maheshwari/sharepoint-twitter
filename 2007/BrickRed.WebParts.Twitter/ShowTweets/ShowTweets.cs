@@ -47,6 +47,17 @@ namespace BrickRed.WebParts.Twitter
 
         #region Webpart Properties
 
+
+        [WebBrowsable(true),
+     Category("Twitter Settings"),
+     Personalizable(PersonalizationScope.Shared),
+      WebPartStorage(Storage.Shared),
+     WebDisplayName("Screen Name"),
+     WebDescription("Please enter the screen name")]
+
+        public string ScreenName { get; set; }
+
+
         [WebBrowsable(true),
        Category("Twitter Settings"),
        Personalizable(PersonalizationScope.Shared),
@@ -123,99 +134,113 @@ namespace BrickRed.WebParts.Twitter
             int i = 0;
             try
             {
-                OAuthTokens tokens = new OAuthTokens();
-                tokens.ConsumerKey = this.ConsumerKey;
-                tokens.ConsumerSecret = this.ConsumerSecret;
-                tokens.AccessToken = this.AccessToken;
-                tokens.AccessTokenSecret = this.AccessTokenSecret;
-
-                UserTimelineOptions options = new UserTimelineOptions();
-                options.Count = this.TweetCount;
-
-                TwitterStatusCollection userTimeline = TwitterTimeline.UserTimeline(tokens, options);
-                Table mainTable;
-                TableRow tr, tr2;
-                TableCell tc, tc2, tc3;
-                Label Caption, Caption2;
-                HyperLink imgHyperLink;
-                string strSource;
-                mainTable = new Table();
-                mainTable.Width = Unit.Percentage(100);
-                mainTable.CellSpacing = 0;
-                mainTable.CellPadding = 5;
-                mainTable.BorderWidth = 1;
-                mainTable.BorderColor = Color.LightGray;
-                mainTable.CssClass = "ms-listviewtable";
-                this.Controls.Add(mainTable);
-
-                foreach (TwitterStatus tweet in userTimeline)
+                if (!string.IsNullOrEmpty(this.ConsumerKey) &&
+                     !string.IsNullOrEmpty(this.ScreenName) &&
+                     !string.IsNullOrEmpty(this.ConsumerSecret) &&
+                     !string.IsNullOrEmpty(this.AccessToken) &&
+                     !string.IsNullOrEmpty(this.AccessTokenSecret))
                 {
-                    if (i < this.TweetCount)
+
+                    OAuthTokens tokens = new OAuthTokens();
+                    tokens.ConsumerKey = this.ConsumerKey;
+                    tokens.ConsumerSecret = this.ConsumerSecret;
+                    tokens.AccessToken = this.AccessToken;
+                    tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                    UserTimelineOptions options = new UserTimelineOptions();
+                    options.Count = this.TweetCount;
+                    options.ScreenName = this.ScreenName;
+
+                    TwitterStatusCollection userTimeline = TwitterTimeline.UserTimeline(tokens);
+                    Table mainTable;
+                    TableRow tr, tr2;
+                    TableCell tc, tc2, tc3;
+                    Label Caption, Caption2;
+                    HyperLink imgHyperLink;
+                    string strSource;
+                    mainTable = new Table();
+                    mainTable.Width = Unit.Percentage(100);
+                    mainTable.CellSpacing = 0;
+                    mainTable.CellPadding = 5;
+                    mainTable.BorderWidth = 1;
+                    mainTable.BorderColor = Color.LightGray;
+                    mainTable.CssClass = "ms-listviewtable";
+                    this.Controls.Add(mainTable);
+
+                    foreach (TwitterStatus tweet in userTimeline)
                     {
-                        tr = new TableRow();
-                        mainTable.Rows.Add(tr);
-                        tc2 = new TableCell();
-
-                        if (this.EnableShowImage)
+                        if (i < this.TweetCount)
                         {
-                            imgHyperLink = new HyperLink();
-                            imgHyperLink.ImageUrl = tweet.User.ProfileImageLocation;
-                            imgHyperLink.NavigateUrl = "http://twitter.com/" + tweet.User.Name;
-                            imgHyperLink.Attributes.Add("target", "_blank");
-                            tc2.Width = Unit.Percentage(10);
-                            tc2.RowSpan = 2;
-                            tr.Cells.Add(tc2);
-                            tc2.Controls.Add(imgHyperLink);
-                        }
+                            tr = new TableRow();
+                            mainTable.Rows.Add(tr);
+                            tc2 = new TableCell();
 
-                        tc = new TableCell();
-                        tc.Width = Unit.Percentage(90);
-                        tr.Cells.Add(tc);
+                            if (this.EnableShowImage)
+                            {
+                                imgHyperLink = new HyperLink();
+                                imgHyperLink.ImageUrl = tweet.User.ProfileImageLocation;
+                                imgHyperLink.NavigateUrl = "http://twitter.com/" + tweet.User.Name;
+                                imgHyperLink.Attributes.Add("target", "_blank");
+                                tc2.Width = Unit.Percentage(10);
+                                tc2.RowSpan = 2;
+                                tr.Cells.Add(tc2);
+                                tc2.Controls.Add(imgHyperLink);
+                            }
 
-                        Caption = new Label();
-                        Caption.Font.Bold = true;
-                        Caption.Text = tweet.Text;
-                        tc.Controls.Add(Caption);
+                            tc = new TableCell();
+                            tc.Width = Unit.Percentage(90);
+                            tr.Cells.Add(tc);
 
-                        tr2 = new TableRow();
-                        tc3 = new TableCell();
+                            Caption = new Label();
+                            Caption.Font.Bold = true;
+                            Caption.Text = tweet.Text;
+                            tc.Controls.Add(Caption);
 
-                        if (this.EnableShowDesc)
-                        {
-                            tc3.VerticalAlign = VerticalAlign.Top;
-                            mainTable.Rows.Add(tr2);
-                            tr2.Cells.Add(tc3);
-                            if (tweet.Source.StartsWith("<"))
-                                strSource = tweet.Source.Substring(tweet.Source.IndexOf('>') + 1, tweet.Source.LastIndexOf('<') - tweet.Source.IndexOf('>') - 1);
+                            tr2 = new TableRow();
+                            tc3 = new TableCell();
+
+                            if (this.EnableShowDesc)
+                            {
+                                tc3.VerticalAlign = VerticalAlign.Top;
+                                mainTable.Rows.Add(tr2);
+                                tr2.Cells.Add(tc3);
+                                if (tweet.Source.StartsWith("<"))
+                                    strSource = tweet.Source.Substring(tweet.Source.IndexOf('>') + 1, tweet.Source.LastIndexOf('<') - tweet.Source.IndexOf('>') - 1);
+                                else
+                                    strSource = tweet.Source;
+                                Caption2 = new Label();
+                                Caption2.Text = relativeTime(tweet.CreatedDate.ToString()) + " via " + strSource;
+                                tc3.Controls.Add(Caption2);
+                            }
+
+                            if (i % 2 == 0)
+                            {
+                                tr.CssClass = "";
+                                tr2.CssClass = "";
+                                tc.CssClass = "ms-vb";
+                                tc2.CssClass = "ms-vb";
+                                tc3.CssClass = "ms-vb";
+                            }
                             else
-                                strSource = tweet.Source;
-                            Caption2 = new Label();
-                            Caption2.Text = relativeTime(tweet.CreatedDate.ToString()) + " via " + strSource;
-                            tc3.Controls.Add(Caption2);
-                        }
-
-                        if (i % 2 == 0)
-                        {
-                            tr.CssClass = "";
-                            tr2.CssClass = "";
-                            tc.CssClass = "ms-vb";
-                            tc2.CssClass = "ms-vb";
-                            tc3.CssClass = "ms-vb";
+                            {
+                                tr.CssClass = "ms-alternating";
+                                tr2.CssClass = "ms-alternating";
+                                tc.CssClass = "ms-vb";
+                                tc2.CssClass = "ms-vb";
+                                tc3.CssClass = "ms-vb";
+                            }
                         }
                         else
                         {
-                            tr.CssClass = "ms-alternating";
-                            tr2.CssClass = "ms-alternating";
-                            tc.CssClass = "ms-vb";
-                            tc2.CssClass = "ms-vb";
-                            tc3.CssClass = "ms-vb";
+                            break;
                         }
+                        i++;
                     }
-                    else
-                    {
-                        break;
-                    }
-                    i++;
+                }
+                else
+                {
+                    Label LblMessage = new Label();
+                    LblMessage.Text = "Twitter webpart properties missing. Please update twitter settings from property pane.";
                 }
             }
             catch (Exception Ex)
