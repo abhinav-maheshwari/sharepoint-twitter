@@ -3,7 +3,8 @@
     OR 
   # !SharePoint Foundation 2010 / !SharePoint 2010 Environment 
 == Step 1. WSP Installation ==
-  # Download [http://sharepoint-facebook-wall.googlecode.com/files/sharepoint-facebook-wall-1.0.zip WSP for 2007] or [http://sharepoint-facebook-wall.googlecode.com/files/sharepoint-facebook-wall-2.0.zip WSP for 2010] and unzip the Facebook Wall Web Part archive. This contains the WSP file, deploy solution batch file and retract solution batch file
+  # Download [http://sharepoint-twitter.googlecode.com/files/sharepoint-twitter-0.1.zip WSP for 2007] or [http://sharepoint-twitter.googlecode.com/files/sharepoint-twitter-0.1.zip WSP for 2010] and unzip the Facebook Wall Web Part archive. 
+  This contains the WSP file, deploy solution batch file and retract solution batch file
   # Change URL property from "<<Server URL>>" to your server URL in both the deploy and retract solution files
   # Now run deploy solution file <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/install-solution.png
   # This will add the solution in solutions gallery <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/solution-properties.PNG
