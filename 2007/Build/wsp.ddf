@@ -8,9 +8,12 @@
 
 manifest.xml manifest.xml
 BrickRed.WebParts.Twitter\feature.xml BrickRed.WebParts.Twitter\feature.xml
+BrickRed.WebParts.Twitter\TweetButton.png IMAGES\BrickRed\TweetButton.png
+BrickRed.WebParts.Twitter\TweetCount.png IMAGES\BrickRed\TweetCount.png
 BrickRed.WebParts.Twitter\BrickRedFeatureLogo.png IMAGES\BrickRed\BrickRedFeatureLogo.png
 BrickRed.WebParts.Twitter.dll BrickRed.WebParts.Twitter.dll
 Twitterizer2.dll Twitterizer2.dll
+Newtonsoft.Json.dll Newtonsoft.Json.dll
 
 BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.webpart BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.webpart
 BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.xml BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.xml
