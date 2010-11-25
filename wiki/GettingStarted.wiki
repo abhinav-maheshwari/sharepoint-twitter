@@ -10,6 +10,12 @@
   # This will add the solution in solutions gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/solution-properties.PNG
   # This will also deploy the feature in site features gallery on specified web portal url<br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/write-features-gallery.PNG
 
+== Step 2. Register Twitter Application ==
+  # Go to http://dev.twitter.com/start
+  # Now you need to register your application <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/register-application.png
+  # Login with your existing credentials or Register first to get login credentials <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/login.png
+  
+
 == Step 2. Configuration of the Wall webpart ==
 
   # Now you need to add the web part on the page from Web Part gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-pane.png 
