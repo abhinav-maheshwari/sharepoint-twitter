@@ -9,10 +9,12 @@
         <SafeControl Assembly="BrickRed.WebParts.Twitter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9f4da00116c38ec5" Namespace="BrickRed.WebParts.Twitter" TypeName="*" Safe="True" />
       </SafeControls>
     </Assembly>
-    <Assembly Location="Twitterizer2.dll" DeploymentTarget="WebApplication">
-    </Assembly>
+    <Assembly Location="Twitterizer2.dll" DeploymentTarget="GlobalAssemblyCache" />
+    <Assembly Location="Newtonsoft.Json.dll" DeploymentTarget="GlobalAssemblyCache" />
   </Assemblies>
   <TemplateFiles>
     <TemplateFile Location="IMAGES\BrickRed\BrickRedFeatureLogo.png"></TemplateFile>
+    <TemplateFile Location="IMAGES\BrickRed\TweetButton.png"></TemplateFile>
+    <TemplateFile Location="IMAGES\BrickRed\TweetCount.png"></TemplateFile>
   </TemplateFiles>
 </Solution>

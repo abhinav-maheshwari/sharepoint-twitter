@@ -154,7 +154,7 @@ namespace BrickRed.WebParts.Twitter
             tc = new TableCell();
             tc.HorizontalAlign = HorizontalAlign.Right;
             buttonTweet = new ImageButton();
-            buttonTweet.ImageUrl = "/_layouts/Images/BrickRed.WebParts.Twitter.Tweet/TweetButton.png";
+            buttonTweet.ImageUrl = "/_layouts/Images/BrickRed/TweetButton.png";
             buttonTweet.Click += new ImageClickEventHandler(buttonTweet_Click);
             tc.Controls.Add(buttonTweet);
             tr.Cells.Add(tc);
@@ -164,9 +164,9 @@ namespace BrickRed.WebParts.Twitter
             tc.HorizontalAlign = HorizontalAlign.Center;
             tc.VerticalAlign = VerticalAlign.Middle;
             tc.Wrap = false;
-            tc.Style.Add("background-image", "/_layouts/Images/BrickRed.WebParts.Twitter.Tweet/TweetCount.png");
+            tc.Style.Add("background-image", "/_layouts/Images/BrickRed/TweetCount.png");
             tc.Style.Add("background-repeat", "no-repeat");
-            tc.Style.Add("width", "30px! important");
+            tc.Style.Add("width", "56px !important");
             lblTweets = new Label();
             lblTweets.Text = "0000";
             tc.Controls.Add(lblTweets);
