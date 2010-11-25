@@ -6,20 +6,20 @@
   # Download [http://sharepoint-twitter.googlecode.com/files/sharepoint-twitter-0.1.zip WSP for 2007] or [http://sharepoint-twitter.googlecode.com/files/sharepoint-twitter-0.1.zip WSP for 2010] and unzip the Facebook Wall Web Part archive. 
   This contains the WSP file, deploy solution batch file and retract solution batch file
   # Change URL property from "<<Server URL>>" to your server URL in both the deploy and retract solution files
-  # Now run deploy solution file <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/images/install-solution.png
-  # This will add the solution in solutions gallery <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/solution-properties.PNG
-  # This will also deploy the feature in site features gallery on specified web portal url<br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/write-features-gallery.PNG
+  # Now run deploy solution file <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/install-solution.png
+  # This will add the solution in solutions gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/solution-properties.PNG
+  # This will also deploy the feature in site features gallery on specified web portal url<br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/write-features-gallery.PNG
 
 == Step 2. Configuration of the Wall webpart ==
 
-  # Now you need to add the web part on the page from Web Part gallery <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/webpart-pane.png 
-  # Once added, Configure User ID , number to feeds you want to show and description <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/webpart-properties.png
-  # Once configured you will be able to see the feeds of this user id <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/webpart-demo.png
+  # Now you need to add the web part on the page from Web Part gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-pane.png 
+  # Once added, Configure User ID , number to feeds you want to show and description <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-properties.png
+  # Once configured you will be able to see the feeds of this user id <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-demo.png
 
 == Step 3. Configuration of the Write On Wall webpart ==
-  # Login and [http://www.facebook.com/developers/createapp.php register your application] on Facebook <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/register-application.png
-  # Note the client id and client secret after registering Facebook application which we will need in next step. Also configure your URL and domain. Please note that the redirect URL in the webpart should be exactly same as configured here <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/configure-facebook.png
-  # Get the Facebook offline code from the facebook client id by [http://opensource.brickred.com/sharepoint-facebook-wall.htm using our code grabber] page. You will need to allow the application for offline access <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/code-grabber.PNG <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/facebook-confirmation.PNG <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/code-success.PNG
-  # Please note the code from previous step. Now you need to add the web part on the page from Web Part gallery <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/webpart-write-pane.PNG
-  # Once added, Configure following properties <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/webpart-write-properties.PNG
-  # Once configured you will be able to post the updates for this user id <br/> http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/webpart-write-demo.png
+  # Login and [http://www.facebook.com/developers/createapp.php register your application] on Facebook <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/register-application.png
+  # Note the client id and client secret after registering Facebook application which we will need in next step. Also configure your URL and domain. Please note that the redirect URL in the webpart should be exactly same as configured here <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/configure-facebook.png
+  # Get the Facebook offline code from the facebook client id by [http://opensource.brickred.com/sharepoint-facebook-wall.htm using our code grabber] page. You will need to allow the application for offline access <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/code-grabber.PNG <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/facebook-confirmation.PNG <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/code-success.PNG
+  # Please note the code from previous step. Now you need to add the web part on the page from Web Part gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-write-pane.PNG
+  # Once added, Configure following properties <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-write-properties.PNG
+  # Once configured you will be able to post the updates for this user id <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/webpart-write-demo.png
