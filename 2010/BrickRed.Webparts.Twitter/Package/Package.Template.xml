@@ -1,3 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Solution xmlns="http://schemas.microsoft.com/sharepoint/">
+﻿<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="672a1540-db2e-4630-83f1-6d2c7b6235ea" SharePointProductVersion="14.0">
+  <Assemblies>
+    <Assembly Location="BrickRed.Webparts.Twitter.dll" DeploymentTarget="GlobalAssemblyCache">
+      <SafeControls>
+        <SafeControl Assembly="BrickRed.Webparts.Twitter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d64d7109275b1882" Namespace="BrickRed.Webparts.Twitter" TypeName="*" />
+      </SafeControls>
+    </Assembly>
+    <Assembly Location="Twitterizer2.dll" DeploymentTarget="GlobalAssemblyCache" />
+    <Assembly Location="Newtonsoft.Json.dll" DeploymentTarget="GlobalAssemblyCache" />
+  </Assemblies>
+  <TemplateFiles>
+    <TemplateFile Location="Images\BrickRed\BrickRedFeatureLogo.png" />
+    <TemplateFile Location="Images\BrickRed\TweetButton.png" />
+    <TemplateFile Location="Images\BrickRed\TweetCount.png" />
+  </TemplateFiles>
+  <FeatureManifests>
+    <FeatureManifest Location="BrickRed.Webparts.Twitter_Feature\Feature.xml" />
+  </FeatureManifests>
 </Solution>

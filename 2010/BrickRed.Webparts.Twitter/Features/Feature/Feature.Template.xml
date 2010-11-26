@@ -1,0 +1,8 @@
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="Brickred Twitter WebParts" Description="Activate twitter tweet and show tweets webparts" Id="441e6b4d-5c58-4593-9b80-157d06eae571" ImageUrl="/BrickRed/BrickRedFeatureLogo.png" Scope="Site">
+  <ElementManifests>
+    <ElementManifest Location="Tweet\Elements.xml" />
+    <ElementFile Location="Tweet\Tweet.webpart" />
+    <ElementManifest Location="ShowTweets\Elements.xml" />
+    <ElementFile Location="ShowTweets\ShowTweets.webpart" />
+  </ElementManifests>
+</Feature>

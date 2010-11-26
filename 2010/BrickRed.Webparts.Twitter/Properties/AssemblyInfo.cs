@@ -9,9 +9,9 @@ using System.Security;
 [assembly: AssemblyTitle("BrickRed.Webparts.Twitter")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("BrickRed.Webparts.Twitter")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
+[assembly: AssemblyCompany("BrickRed Technologies Pvt Ltd")]
+[assembly: AssemblyProduct("BrickRed.Webparts.Twitte")]
+[assembly: AssemblyCopyright("Copyright © BrickRed Technologies Pvt Ltd 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
