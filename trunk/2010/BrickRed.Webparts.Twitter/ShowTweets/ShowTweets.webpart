@@ -7,8 +7,8 @@
     </metaData>
     <data>
       <properties>
-        <property name="Title" type="string">ShowTweets</property>
-        <property name="Description" type="string">My WebPart</property>
+        <property name="Title" type="string">Show Tweets</property>
+        <property name="Description" type="string">Webpart shows the tweets for a configured account</property>
       </properties>
     </data>
   </webPart>
