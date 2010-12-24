@@ -1,4 +1,4 @@
-== Prerequisites ==
+== Prerequisites == 
   # WSS 3.0 / MOSS 2007 Environment 
     OR 
   # !SharePoint Foundation 2010 / !SharePoint 2010 Environment 
