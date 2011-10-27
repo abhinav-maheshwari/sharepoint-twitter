@@ -8,7 +8,7 @@
   # Change URL property from "<<Server URL>>" to your server URL in both the deploy and retract solution files
   # Now run deploy solution file <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/install-solution.png
   # This will add the solution in solutions gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/solution-properties.PNG
-  # This will also deploy the feature in site features gallery on specified web portal url<br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/write-features-gallery.PNG
+  # This will also deploy the feature in site collection features gallery on specified web portal url<br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/write-features-gallery.PNG
 
 == Step 2. Register your Twitter Application ==
   # Go to http://dev.twitter.com/start
