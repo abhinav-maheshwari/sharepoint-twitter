@@ -186,8 +186,8 @@ namespace BrickRed.Webparts.Twitter
                 tokens.ConsumerSecret = this.ConsumerSecret;
                 tokens.AccessToken = this.AccessToken;
                 tokens.AccessTokenSecret = this.AccessTokenSecret;
-                TwitterStatusCollection userTimeline = TwitterTimeline.UserTimeline(tokens);
-                lblTweets.Text = userTimeline.Count.ToString();
+                TwitterResponse<TwitterStatusCollection>  userTimeline = TwitterTimeline.UserTimeline(tokens);
+                lblTweets.Text = userTimeline.ResponseObject.Count.ToString();
 
             }
             catch (Exception Ex)

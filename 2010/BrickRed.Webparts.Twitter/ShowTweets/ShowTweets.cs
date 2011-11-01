@@ -147,7 +147,7 @@ namespace BrickRed.Webparts.Twitter
                     options.Count = this.TweetCount;
                     options.ScreenName = this.ScreenName;
 
-                    TwitterStatusCollection userTimeline = TwitterTimeline.UserTimeline(tokens, options);
+                    TwitterResponse<TwitterStatusCollection> userTimeline = TwitterTimeline.UserTimeline(tokens, options);
                     Table mainTable, innerTable;
                     TableRow tr;
                     TableCell tc;
@@ -163,7 +163,7 @@ namespace BrickRed.Webparts.Twitter
 
                     this.Controls.Add(mainTable);
 
-                    foreach (TwitterStatus tweet in userTimeline)
+                    foreach (TwitterStatus tweet in userTimeline.ResponseObject)
                     {
                         innerTable = new Table();
                         innerTable.CssClass = "ms-viewlsts";
