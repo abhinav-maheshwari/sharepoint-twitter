@@ -53,7 +53,8 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.SharePoint" />
     <Reference Include="Microsoft.SharePoint.Security" />
-    <Reference Include="Twitterizer2">
+    <Reference Include="Twitterizer2, Version=2.2.3.38981, Culture=neutral, PublicKeyToken=69d1469eac671567, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>Third Party Dlls\Twitterizer2.dll</HintPath>
     </Reference>
   </ItemGroup>
