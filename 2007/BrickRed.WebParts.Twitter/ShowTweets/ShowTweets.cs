@@ -35,6 +35,7 @@ using Microsoft.SharePoint.WebPartPages;
 using System.ComponentModel;
 using Twitterizer;
 using System.Drawing;
+using System.Web.UI.HtmlControls;
 
 namespace BrickRed.WebParts.Twitter
 {
@@ -151,10 +152,11 @@ namespace BrickRed.WebParts.Twitter
                     options.Count = this.TweetCount;
                     options.ScreenName = this.ScreenName;
 
-                    TwitterStatusCollection userTimeline = TwitterTimeline.UserTimeline(tokens);
+                    TwitterResponse<TwitterStatusCollection> userTimeline = TwitterTimeline.UserTimeline(tokens);
                     Table mainTable;
                     TableRow tr, tr2;
-                    TableCell tc, tc2, tc3;
+                    TableCell tc, tc2, tc3, tcImage;
+                    bool isTweetOnlyText = true;
                     Label Caption, Caption2;
                     HyperLink imgHyperLink;
                     string strSource;
@@ -167,8 +169,10 @@ namespace BrickRed.WebParts.Twitter
                     mainTable.CssClass = "ms-listviewtable";
                     this.Controls.Add(mainTable);
 
-                    foreach (TwitterStatus tweet in userTimeline)
+                    foreach (TwitterStatus tweet in userTimeline.ResponseObject)
                     {
+                        isTweetOnlyText = true;
+
                         if (i < this.TweetCount)
                         {
                             tr = new TableRow();
@@ -186,15 +190,70 @@ namespace BrickRed.WebParts.Twitter
                                 tr.Cells.Add(tc2);
                                 tc2.Controls.Add(imgHyperLink);
                             }
-
                             tc = new TableCell();
-                            tc.Width = Unit.Percentage(90);
                             tr.Cells.Add(tc);
 
-                            Caption = new Label();
-                            Caption.Font.Bold = true;
-                            Caption.Text = tweet.Text;
-                            tc.Controls.Add(Caption);
+                            if (tweet.Entities.Count > 0)
+                            {
+                                int tweetCount = Convert.ToInt32(tweet.Entities.Count);
+
+                                for (int tweetEntityCount = 0; tweetEntityCount < tweetCount; tweetEntityCount++)
+                                {
+                                    //Check if the tweet is having the Picture
+                                    if (tweet.Entities[tweetEntityCount].ToString().Equals("Twitterizer.Entities.TwitterMediaEntity"))
+                                    {
+                                        if (!string.IsNullOrEmpty(((Twitterizer.Entities.TwitterMediaEntity)(tweet.Entities[tweetEntityCount])).MediaUrl.ToString()))
+                                        {
+                                            //get the image URL
+                                            string ImageURL = ((Twitterizer.Entities.TwitterMediaEntity)(tweet.Entities[0])).MediaUrl.ToString();
+
+                                            //Create a New table inside the td and add image and text inside this table
+                                            Table innerTable = new Table();
+                                            TableRow innerRow = new TableRow();
+                                            TableCell innerImageCell = new TableCell();
+                                            TableCell innerTextCell = new TableCell();
+                                            tc.Controls.Add(innerTable);
+                                            innerTable.Rows.Add(innerRow);
+                                            innerRow.Cells.Add(innerImageCell);
+                                            innerRow.Cells.Add(innerTextCell);
+
+
+                                            HyperLink imgTweet = new HyperLink();
+                                            imgTweet.NavigateUrl = ImageURL;
+                                            imgTweet.Attributes.Add("target", "_blank");
+
+                                            //Added the HTMLImage Control to resize the image
+                                            HtmlImage htmlImage = new HtmlImage();
+                                            htmlImage.Src = ImageURL;
+                                            htmlImage.Height = 150;
+                                            htmlImage.Width = 180;
+                                            imgTweet.Controls.Add(htmlImage);
+
+                                            innerImageCell.Controls.Add(imgTweet);
+
+                                            //Show the text next to the Image
+
+                                            //Add the linkfied text
+                                            Caption = new Label();
+                                            Caption.Font.Bold = true;
+                                            Caption.Text = tweet.LinkifiedText();
+                                            innerTextCell.Controls.Add(Caption);
+
+                                            isTweetOnlyText = false;
+
+                                        }
+                                    }
+                                }
+                            }
+                            if(isTweetOnlyText)
+                            {
+                                tc.Width = Unit.Percentage(90);
+                                tr.Cells.Add(tc);
+                                Caption = new Label();
+                                Caption.Font.Bold = true;
+                                Caption.Text = tweet.LinkifiedText();
+                                tc.Controls.Add(Caption);
+                            }
 
                             tr2 = new TableRow();
                             tc3 = new TableCell();
