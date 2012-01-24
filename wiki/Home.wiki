@@ -1,0 +1,33 @@
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/twitter_teaser.jpg
+
+_Now Supports Twitter Pics!!!_
+
+= What is !SharePoint Twitter? =
+ 
+
+Are you looking to show the twitter updates of your organization on your sharepoint portal ? If yes, then this project is what you might need.
+
+We are providing two webparts for !SharePoint 2007 & !SharePoint 2010, one that can be used to show the tweets of any user on the !SharePoint portal. Second webpart can be used to post tweet to twitter directly from your sharepoint portal. Just download and install, and you are all set. 
+
+All you need is to configure the twitter settings after installation. 
+
+These web parts use out of the box !SharePoint CSS elements that match automatically with your current site theme.
+
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/screen-shot.PNG
+
+= Get Started=
+
+You can get started right away with the following tracks
+
+  * You can [GettingStarted install and use] both the webparts with our step by step guide.
+  * Want to tinker with the source code? Sure go ahead and [http://code.google.com/p/sharepoint-twitter/source/checkout checkout]. It can be immediately built with Visual Studio 2008 (!SharePoint 2007) & Visual Studio 2010 (!SharePoint 2010)
+
+==Acknowledgements==
+We appreciate the great work done by [http://www.twitterizer.net/ Twitterizer] . As a matter of fact, !SharePoint Twitter webparts uses this library for twitter communication.
+
+==Related Links==
+http://sharepoint-facebook-wall.googlecode.com/svn/wiki/images/facebook-icon.png 
+For Facebook webparts please visit [http://code.google.com/p/sharepoint-facebook-wall/ here]
+
+==Facing Issues== 
+Report [http://code.google.com/p/sharepoint-twitter/issues/entry here]
