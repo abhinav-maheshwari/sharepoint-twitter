@@ -22,18 +22,17 @@ These web parts use out of the box !SharePoint CSS elements that match automatic
 
 == Features ==
   # Posting / Reading tweets from / to your twitter page
-  # Twitter Pics
   # 'follow Us' button webpart included.
   # Paging support
   # Show user images
   # Show Header and footer
   # Support for rich media content like images, links etc
 
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/Tweet-webpart-demo.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/show-tweet-webpart-demo.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followers-webpart-demo.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/following-webpart-demo.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followUs-webpart-demo.PNG
+  http://sharepoint-twitter.googlecode.com/svn/wiki/Images/Tweet-webpart-demo.png <br/>
+  http://sharepoint-twitter.googlecode.com/svn/wiki/Images/show-tweet-webpart-demo.png <br/>
+  http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followers-webpart-demo.png <br/>
+  http://sharepoint-twitter.googlecode.com/svn/wiki/Images/following-webpart-demo.png <br/>
+  http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followUs-webpart-demo.png <br/>
 
 = Get Started=
 
