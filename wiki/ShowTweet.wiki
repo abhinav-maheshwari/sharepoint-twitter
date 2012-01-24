@@ -3,10 +3,10 @@
     OR 
   # !SharePoint Foundation 2010 / !SharePoint 2010 Environment 
 == Step 1. WSP Installation ==
-  # You can [URL install] all the webparts with our step by step installation guide.
+  # You can [Installation install] all the webparts with our step by step installation guide.
 
 == Step 2. Register your Twitter Application ==
-  # You can [Url register] application on twitter with our step by step registration guide.
+  # You can [ApplicationRegistrationTwitter register] application on twitter with our step by step registration guide.
 
 == Step 3. Configuration of the Show Tweet webpart ==
 
