@@ -42,7 +42,7 @@ You can get started right away with the following tracks
   * Want to tinker with the source code? Sure go ahead and [http://code.google.com/p/sharepoint-twitter/source/checkout checkout]. It can be immediately built with Visual Studio 2008 (!SharePoint 2007) & Visual Studio 2010 (!SharePoint 2010)
 
 == WebParts Configuration==
-  * You can [ApplicationRegistrationTwitter register] application on Twitetr with our step by step registration guide.
+  * You can [ApplicationRegistrationTwitter register] application on Twitter with our step by step registration guide.
   * You can [Tweet configure] Write Tweet webpart with our step by step configuration guide.
   * You can [ShowTweet configure] Show Tweet webpart with our step by step configuration guide.
   * You can [ShowFollowing configure] Show Following webpart with our step by step configuration guide.
