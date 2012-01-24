@@ -22,17 +22,18 @@ These web parts use out of the box !SharePoint CSS elements that match automatic
 
 == Features ==
   # Posting / Reading tweets from / to your twitter page
+  # Twitter Pics
   # 'follow Us' button webpart included.
   # Paging support
   # Show user images
   # Show Header and footer
   # Support for rich media content like images, links etc
 
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/tweet.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/showtweet.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/Followers.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/following.PNG
-http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followUs.PNG
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/Tweet-webpart-demo.PNG
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/show-tweet-webpart-demo.PNG
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followers-webpart-demo.PNG
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/following-webpart-demo.PNG
+http://sharepoint-twitter.googlecode.com/svn/wiki/Images/followUs-webpart-demo.PNG
 
 = Get Started=
 
@@ -42,7 +43,7 @@ You can get started right away with the following tracks
   * Want to tinker with the source code? Sure go ahead and [http://code.google.com/p/sharepoint-twitter/source/checkout checkout]. It can be immediately built with Visual Studio 2008 (!SharePoint 2007) & Visual Studio 2010 (!SharePoint 2010)
 
 == WebParts Configuration==
-  * You can [ApplicationRegistrationTwitter register] application on Twitter with our step by step registration guide.
+  * You can [ApplicationRegistrationTwitter register] application on Twitetr with our step by step registration guide.
   * You can [Tweet configure] Write Tweet webpart with our step by step configuration guide.
   * You can [ShowTweet configure] Show Tweet webpart with our step by step configuration guide.
   * You can [ShowFollowing configure] Show Following webpart with our step by step configuration guide.
