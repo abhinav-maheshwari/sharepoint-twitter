@@ -10,4 +10,7 @@
   # This will add the solution in solutions gallery <br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/solution-properties.PNG
   # This will also deploy the feature in site collection features gallery on specified web portal url<br/> http://sharepoint-twitter.googlecode.com/svn/wiki/Images/write-features-gallery.PNG
 
-  * You can [ApplicationRegistrationTwitter register] application on Twitetr with our step by step registration guide.
+
+= Next Step : Twitter Configuration=
+
+You can [ApplicationRegistrationTwitter register] application on Twitter with our step by step registration guide.
