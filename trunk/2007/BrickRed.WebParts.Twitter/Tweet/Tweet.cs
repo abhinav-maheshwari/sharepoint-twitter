@@ -35,6 +35,7 @@ using Microsoft.SharePoint.WebPartPages;
 using System.ComponentModel;
 using Twitterizer;
 using System.Drawing;
+using System.Web.UI.HtmlControls;
 
 namespace BrickRed.WebParts.Twitter
 {
@@ -46,12 +47,20 @@ namespace BrickRed.WebParts.Twitter
         Label lblTweets;
 
         #region Webpart Properties
-       
         [WebBrowsable(true),
-       Category("Twitter Settings"),
-       Personalizable(PersonalizationScope.User),
-       WebDisplayName("Consumer Key"),
-       WebDescription("Please enter a ConsumerKey")]
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.Shared),
+        WebPartStorage(Storage.Shared),
+        DefaultValue(""),
+        WebDisplayName("Screen Name"),
+        WebDescription("Please enter the screen name")]
+        public string ScreenName { get; set; }
+
+        [WebBrowsable(true),
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.User),
+        WebDisplayName("Consumer Key"),
+        WebDescription("Please enter a ConsumerKey")]
         public string ConsumerKeyProperty
         {
             get { return ConsumerKey; }
@@ -60,10 +69,10 @@ namespace BrickRed.WebParts.Twitter
         public string ConsumerKey;
 
         [WebBrowsable(true),
-       Category("Twitter Settings"),
-       Personalizable(PersonalizationScope.User),
-       WebDisplayName("Consumer Secret"),
-       WebDescription("Please enter ConsumerSecret")]
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.User),
+        WebDisplayName("Consumer Secret"),
+        WebDescription("Please enter ConsumerSecret")]
 
         public string ConsumerSecretProperty
         {
@@ -73,10 +82,10 @@ namespace BrickRed.WebParts.Twitter
         public string ConsumerSecret;
 
         [WebBrowsable(true),
-       Category("Twitter Settings"),
-       Personalizable(PersonalizationScope.User),
-       WebDisplayName("Access Token"),
-       WebDescription("Please enter AccessToken")]
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.User),
+        WebDisplayName("Access Token"),
+        WebDescription("Please enter AccessToken")]
 
         public string AccessTokenProperty
         {
@@ -86,10 +95,10 @@ namespace BrickRed.WebParts.Twitter
         public string AccessToken;
 
         [WebBrowsable(true),
-       Category("Twitter Settings"),
-       Personalizable(PersonalizationScope.User),
-       WebDisplayName("Access Token Secret"),
-       WebDescription("Please enter AccessTokenSecret")]
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.User),
+        WebDisplayName("Access Token Secret"),
+        WebDescription("Please enter AccessTokenSecret")]
 
         public string AccessTokenSecretProperty
         {
@@ -100,7 +109,7 @@ namespace BrickRed.WebParts.Twitter
 
         [WebBrowsable(true),
         Category("Twitter Settings"),
-         Personalizable(PersonalizationScope.Shared),
+        Personalizable(PersonalizationScope.Shared),
         WebPartStorage(Storage.Shared),
         WebDisplayName("Show User Name"),
         WebDescription("Would you like to show user name")]
@@ -111,6 +120,63 @@ namespace BrickRed.WebParts.Twitter
             set { EnableShowUserName = value; }
         }
         public bool EnableShowUserName;
+
+        private bool _showHeader = false;
+        [WebBrowsable(true),
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.Shared),
+        WebPartStorage(Storage.Shared),
+        DefaultValue(false),
+        WebDisplayName("Show header"),
+        WebDescription("Would you like to show header")]
+        public bool ShowHeader
+        {
+            get { return _showHeader; }
+            set { _showHeader = value; }
+        }
+
+        private bool _showHeaderImage = false;
+        [WebBrowsable(true),
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.Shared),
+        WebPartStorage(Storage.Shared),
+        DefaultValue(false),
+        WebDisplayName("Show Image in header"),
+        WebDescription("Would you like to show image in header")]
+        public bool ShowHeaderImage
+        {
+            get { return _showHeaderImage; }
+            set { _showHeaderImage = value; }
+        }
+
+        private bool _showFooter = true;
+        [WebBrowsable(true),
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.Shared),
+        WebPartStorage(Storage.Shared),
+        DefaultValue(true),
+        WebDisplayName("Show footer"),
+        WebDescription("Would you like to show footer")]
+        public bool ShowFooter
+        {
+            get { return _showFooter; }
+            set { _showFooter = value; }
+        }
+
+
+        private bool _showFollowUs = true;
+        [WebBrowsable(true),
+        Category("Twitter Settings"),
+        Personalizable(PersonalizationScope.Shared),
+        WebPartStorage(Storage.Shared),
+        DefaultValue(true),
+        WebDisplayName("Show 'Follow Us' link at footer"),
+        WebDescription("Would you like to show 'Follow Us' link at footer")]
+        public bool ShowFollowUs
+        {
+            get { return _showFollowUs; }
+            set { _showFollowUs = value; }
+        }
 
         #endregion
 
@@ -130,36 +196,58 @@ namespace BrickRed.WebParts.Twitter
 
             mainTable = new Table();
             mainTable.Width = Unit.Percentage(100);
-            mainTable.CellSpacing = 5;
+            mainTable.CellSpacing = 0;
             mainTable.CellPadding = 0;
+            mainTable.CssClass = "ms-viewlsts";
 
-            this.Controls.Add(mainTable);
+            //Create the header
+            if (this.ShowHeader)
+            {
+                tr = new TableRow();
+                tc = new TableCell();
+                tc.ColumnSpan = 2;
+                tc.Controls.Add(CreateHeaderFooter("Header"));
+                tr.Cells.Add(tc);
+                mainTable.Rows.Add(tr);
+            }
 
+            //adding the text box
             tr = new TableRow();
             mainTable.Rows.Add(tr);
             tc = new TableCell();
             tc.ColumnSpan = 2;
             tr.Cells.Add(tc);
+
+            //Create Div for placing the textbox
+            HtmlGenericControl div = new HtmlGenericControl("DIV");
+            div.ID = "Tweetdiv";
+            tc.Controls.Add(div);
+            //Search for the class and adding the css class to it
+            HtmlControl control = tc.Controls[0] as HtmlControl;
+            control.Attributes["class"] = "txtboxTweetWrapper";
+
             textTweet = new TextBox();
             textTweet.TextMode = TextBoxMode.MultiLine;
             textTweet.MaxLength = 140;
             textTweet.Width = Unit.Percentage(100);
             textTweet.Height = Unit.Pixel(100);
-            tc.Controls.Add(textTweet);
+            div.Controls.Add(textTweet);
 
 
+            //Adding the Tweet Buttton
             tr = new TableRow();
             mainTable.Rows.Add(tr);
 
             tc = new TableCell();
             tc.HorizontalAlign = HorizontalAlign.Right;
+            tc.Width = Unit.Percentage(94);
             buttonTweet = new ImageButton();
             buttonTweet.ImageUrl = "/_layouts/Images/BrickRed/TweetButton.png";
             buttonTweet.Click += new ImageClickEventHandler(buttonTweet_Click);
             tc.Controls.Add(buttonTweet);
             tr.Cells.Add(tc);
 
-
+            //Adding the tweet count image
             tc = new TableCell();
             tc.HorizontalAlign = HorizontalAlign.Center;
             tc.VerticalAlign = VerticalAlign.Middle;
@@ -172,9 +260,65 @@ namespace BrickRed.WebParts.Twitter
             tc.Controls.Add(lblTweets);
             tr.Cells.Add(tc);
 
+            //Create Footer
+            if (this.ShowFooter)
+            {
+                tr = new TableRow();
+                tc = new TableCell();
+                tc.ColumnSpan = 2;
+                tc.Controls.Add(CreateHeaderFooter("Footer"));
+                tr.Cells.Add(tc);
+                mainTable.Rows.Add(tr);
+            }
+
+            this.Controls.Add(mainTable);
+
+        }
+
+        private Table CreateHeaderFooter(string Type)
+        {
+            Table tbHF;
+            tbHF = new Table();
+            tbHF.Width = Unit.Percentage(100);
+            tbHF.CellPadding = 0;
+            tbHF.CellSpacing = 0;
+
+            if (!string.IsNullOrEmpty(this.ScreenName)
+                && !string.IsNullOrEmpty(this.ConsumerKey)
+                && !string.IsNullOrEmpty(this.ConsumerSecret)
+                && !string.IsNullOrEmpty(this.AccessToken)
+                && !string.IsNullOrEmpty(this.AccessTokenSecret))
+            {
+                //create a authorization token of the user
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                //Set the query options
+                UserTimelineOptions Useroptions = new UserTimelineOptions();
+                Useroptions.ScreenName = this.ScreenName;
+
+                //Get the account info
+                TwitterResponse<TwitterStatusCollection> userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
 
 
+                #region Header
+                if (Type.Equals("Header"))
+                {
+                    tbHF = Common.CreateHeaderFooter("Header", userInfo, this.ShowHeaderImage, this.ShowFollowUs);
+                }
+                #endregion
 
+                #region Footer
+                if (Type.Equals("Footer"))
+                {
+                    tbHF = Common.CreateHeaderFooter("Footer", userInfo, this.ShowHeaderImage, this.ShowFollowUs);
+                }
+                #endregion
+            }
+            return tbHF;
         }
 
         protected override void OnPreRender(EventArgs e)

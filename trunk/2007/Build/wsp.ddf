@@ -11,6 +11,11 @@ BrickRed.WebParts.Twitter\feature.xml BrickRed.WebParts.Twitter\feature.xml
 BrickRed.WebParts.Twitter\TweetButton.png IMAGES\BrickRed\TweetButton.png
 BrickRed.WebParts.Twitter\TweetCount.png IMAGES\BrickRed\TweetCount.png
 BrickRed.WebParts.Twitter\BrickRedFeatureLogo.png IMAGES\BrickRed\BrickRedFeatureLogo.png
+BrickRed.WebParts.Twitter\Greytweet.png LAYOUTS\Brickred.OpenSource.Twitter\Greytweet.png
+BrickRed.WebParts.Twitter\BlueTweet.png LAYOUTS\Brickred.OpenSource.Twitter\BlueTweet.png
+BrickRed.WebParts.Twitter\twitterlogo.png LAYOUTS\Brickred.OpenSource.Twitter\twitterlogo.png
+BrickRed.WebParts.Twitter\twitterlogo.png LAYOUTS\Brickred.OpenSource.Twitter\bg.png
+BrickRed.WebParts.Twitter\twitterlogo.png LAYOUTS\Brickred.OpenSource.Twitter\twitterbird.png
 BrickRed.WebParts.Twitter.dll BrickRed.WebParts.Twitter.dll
 Twitterizer2.dll Twitterizer2.dll
 Newtonsoft.Json.dll Newtonsoft.Json.dll
@@ -20,6 +25,15 @@ BrickRed.WebParts.Twitter\ShowTweets\ShowTweets.xml BrickRed.WebParts.Twitter\Sh
 
 BrickRed.WebParts.Twitter\Tweet\Tweet.webpart BrickRed.WebParts.Twitter\Tweet\Tweet.webpart
 BrickRed.WebParts.Twitter\Tweet\Tweet.xml BrickRed.WebParts.Twitter\Tweet\Tweet.xml
+
+BrickRed.WebParts.Twitter\FollowUs\FollowUs.webpart BrickRed.WebParts.Twitter\FollowUs\FollowUs.webpart
+BrickRed.WebParts.Twitter\FollowUs\FollowUs.xml BrickRed.WebParts.Twitter\FollowUs\FollowUs.xml
+
+BrickRed.WebParts.Twitter\ShowFollowing\ShowFollowing.webpart BrickRed.WebParts.Twitter\ShowFollowing\ShowFollowing.webpart
+BrickRed.WebParts.Twitter\ShowFollowing\ShowFollowing.xml BrickRed.WebParts.Twitter\ShowFollowing\ShowFollowing.xml
+
+BrickRed.WebParts.Twitter\ShowFollowers\ShowFollowers.webpart BrickRed.WebParts.Twitter\ShowFollowers\ShowFollowers.webpart
+BrickRed.WebParts.Twitter\ShowFollowers\ShowFollowers.xml BrickRed.WebParts.Twitter\ShowFollowers\ShowFollowers.xml
 
 
 

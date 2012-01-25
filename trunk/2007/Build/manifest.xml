@@ -16,5 +16,10 @@
     <TemplateFile Location="IMAGES\BrickRed\BrickRedFeatureLogo.png"></TemplateFile>
     <TemplateFile Location="IMAGES\BrickRed\TweetButton.png"></TemplateFile>
     <TemplateFile Location="IMAGES\BrickRed\TweetCount.png"></TemplateFile>
+    <TemplateFile Location="Layouts\Brickred.OpenSource.Twitter\BlueTweet.png" />
+    <TemplateFile Location="Layouts\Brickred.OpenSource.Twitter\Greytweet.png" />
+    <TemplateFile Location="Layouts\Brickred.OpenSource.Twitter\twitterlogo.png" />
+    <TemplateFile Location="Layouts\Brickred.OpenSource.Twitter\bg.png" />
+    <TemplateFile Location="Layouts\Brickred.OpenSource.Twitter\twitterbird.png" />
   </TemplateFiles>
 </Solution>
