@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="672a1540-db2e-4630-83f1-6d2c7b6235ea" solutionId="672a1540-db2e-4630-83f1-6d2c7b6235ea" resetWebServer="false" name="BrickRed.Webparts.Twitter" isDesignerEnabled="false" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="672a1540-db2e-4630-83f1-6d2c7b6235ea" solutionId="672a1540-db2e-4630-83f1-6d2c7b6235ea" resetWebServer="false" name="BrickRed.Webparts.Twitter" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <assemblies>
     <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="Third Party Dlls\Newtonsoft.Json.dll" />
     <customAssembly location="Twitterizer2.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="Third Party Dlls\Twitterizer2.dll" />
@@ -9,5 +9,6 @@
   </features>
   <projectItems>
     <projectItemReference itemId="22aa9321-cba6-48c4-b61a-f9d4b21db86a" />
+    <projectItemReference itemId="4dbf049c-2442-49ea-aeb3-2b2bc51ef353" />
   </projectItems>
 </package>

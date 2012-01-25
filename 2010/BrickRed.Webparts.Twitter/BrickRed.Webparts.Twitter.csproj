@@ -60,7 +60,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeFiles\Common.cs" />
+    <Compile Include="CodeFiles\ProgressTemplate.cs" />
+    <Compile Include="CodeFiles\StyleSheet.cs" />
+    <Compile Include="FollowUs\FollowUs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShowFollowers\ShowFollowers.cs" />
+    <Compile Include="ShowFollowing\ShowFollowing.cs" />
     <Compile Include="ShowTweets\ShowTweets.cs" />
     <Compile Include="Tweet\Tweet.cs" />
   </ItemGroup>
@@ -68,10 +74,17 @@
     <None Include="Features\Feature\Feature.feature">
       <FeatureId>{4be1c1a9-dad7-48e9-b664-9a9dda45c5e2}</FeatureId>
     </None>
+    <None Include="FollowUs\FollowUs.webpart" />
+    <None Include="FollowUs\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{c5a35559-0ec3-47ab-ad05-02c822037a1e}</SharePointProjectItemId>
+    </None>
     <None Include="Images\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{22aa9321-cba6-48c4-b61a-f9d4b21db86a}</SharePointProjectItemId>
     </None>
     <None Include="key.snk" />
+    <None Include="Layouts\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{4dbf049c-2442-49ea-aeb3-2b2bc51ef353}</SharePointProjectItemId>
+    </None>
     <None Include="Package\Package.package">
       <PackageId>{672a1540-db2e-4630-83f1-6d2c7b6235ea}</PackageId>
     </None>
@@ -79,6 +92,14 @@
       <DependentUpon>Package.package</DependentUpon>
       <SubType>Designer</SubType>
     </None>
+    <None Include="ShowFollowers\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{749dd6bb-dd56-484f-88ff-4f2e0e0a3545}</SharePointProjectItemId>
+    </None>
+    <None Include="ShowFollowers\ShowFollowers.webpart" />
+    <None Include="ShowFollowing\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{96759614-445c-4f61-a9c8-10983e8d606e}</SharePointProjectItemId>
+    </None>
+    <None Include="ShowFollowing\ShowFollowing.webpart" />
     <None Include="ShowTweets\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{10568119-4650-49a4-b6da-fc8a5c7e9596}</SharePointProjectItemId>
     </None>
@@ -94,9 +115,18 @@
       <DependentUpon>Feature.feature</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="FollowUs\Elements.xml" />
     <Content Include="Images\BrickRed\BrickRedFeatureLogo.png" />
     <Content Include="Images\BrickRed\TweetButton.png" />
     <Content Include="Images\BrickRed\TweetCount.png" />
+    <Content Include="Layouts\Brickred.OpenSource.Twitter\bg.png" />
+    <Content Include="Layouts\Brickred.OpenSource.Twitter\BlueTweet.png" />
+    <Content Include="Layouts\Brickred.OpenSource.Twitter\Greytweet.png" />
+    <Content Include="Layouts\Brickred.OpenSource.Twitter\loader.gif" />
+    <Content Include="Layouts\Brickred.OpenSource.Twitter\twitterbird.png" />
+    <Content Include="Layouts\Brickred.OpenSource.Twitter\twitterlogo.png" />
+    <Content Include="ShowFollowers\Elements.xml" />
+    <Content Include="ShowFollowing\Elements.xml" />
     <Content Include="ShowTweets\Elements.xml" />
     <Content Include="Tweet\Elements.xml" />
   </ItemGroup>
