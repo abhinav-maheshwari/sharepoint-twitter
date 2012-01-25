@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<webParts>
+  <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
+    <metaData>
+      <!--
+      The following Guid is used as a reference to the web part class, 
+      and it will be automatically replaced with actual type name at deployment time.
+      -->
+      <type name="185d7e70-8216-4b14-9b88-f5584f25c282" />
+      <importErrorMessage>Cannot import FollowUs Web Part.</importErrorMessage>
+    </metaData>
+    <data>
+      <properties>
+        <property name="Title" type="string">Follow Us</property>
+        <property name="Description" type="string">Webpart enables user to allow twitter 'Follow us'.</property>
+      </properties>
+    </data>
+  </webPart>
+</webParts>

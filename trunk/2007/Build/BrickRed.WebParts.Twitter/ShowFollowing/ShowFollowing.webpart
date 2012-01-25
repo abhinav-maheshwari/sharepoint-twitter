@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<webParts>
+  <webPart xmlns="http://schemas.microsoft.com/WebPart/v3">
+    <metaData>
+      <!--
+      The following Guid is used as a reference to the web part class, 
+      and it will be automatically replaced with actual type name at deployment time.
+      -->
+      <type name="66b5cb21-d9ea-43c1-b486-9eb0971b4425" />
+      <importErrorMessage>Cannot import ShowFollowing Web Part.</importErrorMessage>
+    </metaData>
+    <data>
+      <properties>
+        <property name="Title" type="string">Show Following</property>
+        <property name="Description" type="string">Webpart enables user to show his twitter friends</property>
+      </properties>
+    </data>
+  </webPart>
+</webParts>
