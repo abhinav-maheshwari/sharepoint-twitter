@@ -36,6 +36,7 @@ using System.ComponentModel;
 using Twitterizer;
 using System.Drawing;
 using System.Web.UI.HtmlControls;
+using System.Web;
 
 namespace BrickRed.WebParts.Twitter
 {
@@ -250,13 +251,12 @@ namespace BrickRed.WebParts.Twitter
             //Adding the tweet count image
             tc = new TableCell();
             tc.HorizontalAlign = HorizontalAlign.Center;
-            tc.VerticalAlign = VerticalAlign.Middle;
+            tc.Width = Unit.Pixel(57);
             tc.Wrap = false;
             tc.Style.Add("background-image", "/_layouts/Images/BrickRed/TweetCount.png");
             tc.Style.Add("background-repeat", "no-repeat");
             tc.Style.Add("width", "56px !important");
             lblTweets = new Label();
-            lblTweets.Text = "0000";
             tc.Controls.Add(lblTweets);
             tr.Cells.Add(tc);
 
@@ -275,6 +275,11 @@ namespace BrickRed.WebParts.Twitter
 
         }
 
+        /// <summary>
+        /// Create the Header and footer of the Webpart
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <returns></returns>
         private Table CreateHeaderFooter(string Type)
         {
             Table tbHF;
@@ -282,6 +287,7 @@ namespace BrickRed.WebParts.Twitter
             tbHF.Width = Unit.Percentage(100);
             tbHF.CellPadding = 0;
             tbHF.CellSpacing = 0;
+           
 
             if (!string.IsNullOrEmpty(this.ScreenName)
                 && !string.IsNullOrEmpty(this.ConsumerKey)
@@ -289,32 +295,19 @@ namespace BrickRed.WebParts.Twitter
                 && !string.IsNullOrEmpty(this.AccessToken)
                 && !string.IsNullOrEmpty(this.AccessTokenSecret))
             {
-                //create a authorization token of the user
-                OAuthTokens tokens = new OAuthTokens();
-                tokens.ConsumerKey = this.ConsumerKey;
-                tokens.ConsumerSecret = this.ConsumerSecret;
-                tokens.AccessToken = this.AccessToken;
-                tokens.AccessTokenSecret = this.AccessTokenSecret;
-
-                //Set the query options
-                UserTimelineOptions Useroptions = new UserTimelineOptions();
-                Useroptions.ScreenName = this.ScreenName;
-
-                //Get the account info
-                TwitterResponse<TwitterStatusCollection> userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
-
+                TwitterResponse<TwitterStatusCollection> userInfo = GetTwitterStatus();
 
                 #region Header
                 if (Type.Equals("Header"))
                 {
-                    tbHF = Common.CreateHeaderFooter("Header", userInfo, this.ShowHeaderImage, this.ShowFollowUs);
+                    tbHF = Common.CreateHeaderFooter("Header", userInfo.ResponseObject, this.ShowHeaderImage, this.ShowFollowUs);
                 }
                 #endregion
 
                 #region Footer
                 if (Type.Equals("Footer"))
                 {
-                    tbHF = Common.CreateHeaderFooter("Footer", userInfo, this.ShowHeaderImage, this.ShowFollowUs);
+                    tbHF = Common.CreateHeaderFooter("Footer", userInfo.ResponseObject, this.ShowHeaderImage, this.ShowFollowUs);
                 }
                 #endregion
             }
@@ -326,18 +319,19 @@ namespace BrickRed.WebParts.Twitter
 
             try
             {
+                TwitterResponse<TwitterStatusCollection> userInfo = GetTwitterStatus();
                 textTweet.Text = "";
                 if (this.EnableShowUserName)
                     textTweet.Text = SPContext.Current.Web.CurrentUser.Name + " : ";
-
-
-                OAuthTokens tokens = new OAuthTokens();
-                tokens.ConsumerKey = this.ConsumerKey;
-                tokens.ConsumerSecret = this.ConsumerSecret;
-                tokens.AccessToken = this.AccessToken;
-                tokens.AccessTokenSecret = this.AccessTokenSecret;
-                TwitterResponse<TwitterStatusCollection> userTimeline = TwitterTimeline.UserTimeline(tokens);
-                lblTweets.Text = userTimeline.ResponseObject.Count.ToString();
+               
+                if (userInfo.ResponseObject.Count < 10000)
+                {
+                    lblTweets.Text = userInfo.ResponseObject.Count.ToString();
+                }
+                else
+                {
+                    lblTweets.Text = "10000+";
+                }
 
             }
             catch (Exception Ex)
@@ -366,6 +360,37 @@ namespace BrickRed.WebParts.Twitter
                 LblMessage.Text = Ex.Message;
                 this.Controls.Add(LblMessage);
             }
+        }
+
+        private TwitterResponse<TwitterStatusCollection> GetTwitterStatus()
+        {
+            TwitterResponse<TwitterStatusCollection> userInfo = new TwitterResponse<TwitterStatusCollection>();
+
+            //use cache here
+            if (Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] == null)
+            {
+                //create a authorization token of the user
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                //Set the query options
+
+                UserTimelineOptions Useroptions = new UserTimelineOptions();
+                Useroptions.ScreenName = this.ScreenName;
+
+                //Get the account info
+                userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+                HttpContext.Current.Cache.Insert(string.Format("TweetWrite-{0}", this.ScreenName), userInfo, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+            }
+            else
+            {
+                userInfo = Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] as TwitterResponse<TwitterStatusCollection>;
+            }
+
+            return userInfo;
         }
     }
 }

@@ -14,8 +14,8 @@ BrickRed.WebParts.Twitter\BrickRedFeatureLogo.png IMAGES\BrickRed\BrickRedFeatur
 BrickRed.WebParts.Twitter\Greytweet.png LAYOUTS\Brickred.OpenSource.Twitter\Greytweet.png
 BrickRed.WebParts.Twitter\BlueTweet.png LAYOUTS\Brickred.OpenSource.Twitter\BlueTweet.png
 BrickRed.WebParts.Twitter\twitterlogo.png LAYOUTS\Brickred.OpenSource.Twitter\twitterlogo.png
-BrickRed.WebParts.Twitter\twitterlogo.png LAYOUTS\Brickred.OpenSource.Twitter\bg.png
-BrickRed.WebParts.Twitter\twitterlogo.png LAYOUTS\Brickred.OpenSource.Twitter\twitterbird.png
+BrickRed.WebParts.Twitter\bg.png LAYOUTS\Brickred.OpenSource.Twitter\bg.png
+BrickRed.WebParts.Twitter\twitterbird.png LAYOUTS\Brickred.OpenSource.Twitter\twitterbird.png
 BrickRed.WebParts.Twitter.dll BrickRed.WebParts.Twitter.dll
 Twitterizer2.dll Twitterizer2.dll
 Newtonsoft.Json.dll Newtonsoft.Json.dll

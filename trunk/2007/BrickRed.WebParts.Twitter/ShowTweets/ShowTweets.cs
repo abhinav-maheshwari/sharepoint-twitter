@@ -37,6 +37,7 @@ using Twitterizer;
 using System.Drawing;
 using System.Web.UI.HtmlControls;
 using System.Web;
+using System.Web.Caching;
 
 namespace BrickRed.WebParts.Twitter
 {
@@ -44,7 +45,6 @@ namespace BrickRed.WebParts.Twitter
     public class ShowTweets : System.Web.UI.WebControls.WebParts.WebPart
     {
         #region Declaration
-
         ImageButton imgMoreTweet = new ImageButton();
         HtmlImage imgNoTweet = new HtmlImage();
         TableCell tcContent = new TableCell();
@@ -52,12 +52,20 @@ namespace BrickRed.WebParts.Twitter
         string ImagePath = SPContext.Current.Web.Url + "/_layouts/Brickred.OpenSource.Twitter/";
         HiddenField objPageCount;
         string PageCountValue = string.Empty;
-        TwitterResponse<TwitterStatusCollection> userTimeline;
-
         #endregion
 
         public ShowTweets()
         {
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            //Creates the hidden field for keeping the page info
+            CreateHiddenField();
+
+            //Get the Css Class
+            this.Page.Header.Controls.Add(StyleSheet.CssStyle());
+            base.OnLoad(e);
         }
 
         #region WebPart Properties
@@ -274,6 +282,13 @@ namespace BrickRed.WebParts.Twitter
 
         private void ShowPagedTweets(int PageNumber)
         {
+            TwitterStatusCollection tweets;
+
+            //First fetch the action tweets here
+            tweets = FetchTweets(PageNumber);
+
+
+            //create the update panels and show the tweets
             Table pagingTable;
             TableRow trpaging = new TableRow();
             TableCell tcpaging = new TableCell();
@@ -296,8 +311,9 @@ namespace BrickRed.WebParts.Twitter
             Maintable.CellSpacing = 0;
             TableRow trContent = new TableRow();
 
-            //Adding the tweets to the main table
-            tcContent.Controls.Add(GetTweets(PageNumber));
+            //add tweet table here
+            tcContent.Controls.Add(CreateTweetTable(PageNumber, tweets));
+
             trContent.Controls.Add(tcContent);
             Maintable.Controls.Add(trContent);
 
@@ -307,11 +323,11 @@ namespace BrickRed.WebParts.Twitter
             trpaging.Controls.Add(tcpaging);
             pagingTable.Controls.Add(trpaging);
             if (this.ShowHeader)
-                this.Controls.Add(Common.CreateHeaderFooter("Header", userTimeline, this.ShowHeaderImage, this.ShowFollowUs));
+                this.Controls.Add(Common.CreateHeaderFooter("Header", tweets, this.ShowHeaderImage, this.ShowFollowUs));
             this.Controls.Add(Maintable);
             this.Controls.Add(pagingTable);
             if (this.ShowFooter)
-                this.Controls.Add(Common.CreateHeaderFooter("Footer", userTimeline, this.ShowHeaderImage, this.ShowFollowUs));
+                this.Controls.Add(Common.CreateHeaderFooter("Footer", tweets, this.ShowHeaderImage, this.ShowFollowUs));
         }
 
         /// <summary>
@@ -319,194 +335,54 @@ namespace BrickRed.WebParts.Twitter
         /// </summary>
         /// <param name="PageNumber"></param>
         /// <returns></returns>
-        private Table GetTweets(int PageNumber)
+        private TwitterStatusCollection FetchTweets(int PageNumber)
+        {
+            TwitterStatusCollection tweets = new TwitterStatusCollection();
+
+            //cache the tweets here
+            if (Page.Cache[string.Format("Tweet-{0}", PageNumber)] == null)
+            {
+                //set the tokens here
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                UserTimelineOptions options = new UserTimelineOptions();
+                options.Count = this.TweetCount * PageNumber;
+                options.Page = 1;
+                options.ScreenName = this.ScreenName;
+
+                //now hit the twitter and get the response
+                tweets = TwitterTimeline.UserTimeline(tokens, options).ResponseObject;
+
+                if (PageNumber == 1)
+                {
+                    HttpContext.Current.Cache.Add(string.Format("Tweet-{0}", PageNumber), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, CacheRemovedCallBack);
+                }
+                else
+                {
+                    HttpContext.Current.Cache.Insert(string.Format("Tweet-{0}", PageNumber), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+                }
+            }
+            else
+            {
+                tweets = HttpContext.Current.Cache[string.Format("Tweet-{0}", PageNumber)] as TwitterStatusCollection;
+            }
+
+            return tweets;
+        }
+
+
+        /// <summary>
+        /// Get the tweets from the Twitter object
+        /// </summary>
+        /// <param name="PageNumber"></param>
+        /// <returns></returns>
+        private Table CreateTweetTable(int PageNumber, TwitterStatusCollection tweets)
         {
             int i = 0;
-            //if (Convert.ToBoolean(ViewState["alternateBackColor"]))
-            //{
-            //    i = 1;
-            //}
-
-            #region Set token and User options to get the tweets
-
-            OAuthTokens tokens = new OAuthTokens();
-            tokens.ConsumerKey = this.ConsumerKey;
-            tokens.ConsumerSecret = this.ConsumerSecret;
-            tokens.AccessToken = this.AccessToken;
-            tokens.AccessTokenSecret = this.AccessTokenSecret;
-
-            UserTimelineOptions options = new UserTimelineOptions();
-            options.Count = this.TweetCount * PageNumber;
-            options.ScreenName = this.ScreenName;
-            options.Page = 1;
-
-            #endregion
-
-            userTimeline = TwitterTimeline.UserTimeline(tokens, options);
-
-            #region Delete if worked
-            //Table mainTable;
-            //TableRow tr, tr2;
-            //TableCell tc, tc2, tc3;
-            //bool isTweetOnlyText = true;
-            //Label Caption, Caption2;
-            //HyperLink imgHyperLink;
-            //string strSource;
-            //mainTable = new Table();
-            //mainTable.ID = "CustomMainTable";
-            //mainTable.Width = Unit.Percentage(100);
-            //mainTable.CellSpacing = 0;
-            //mainTable.CellPadding = 5;
-            //mainTable.BorderWidth = 1;
-            ////mainTable.BorderColor = Color.LightGray;
-            //mainTable.CssClass = "ms-listviewtable";
-
-            //mainTable.Attributes.Add("style", "border:1px solid #FEFEFF;");
-
-            //this.Controls.Add(mainTable);
-
-            //if (userTimeline.ResponseObject.Count > 0)
-            //{
-            //    foreach (TwitterStatus tweet in userTimeline.ResponseObject)
-            //    {
-            //        isTweetOnlyText = true;
-
-            //        if (i < this.TweetCount)
-            //        {
-            //            tr = new TableRow();
-            //            mainTable.Rows.Add(tr);
-            //            tc2 = new TableCell();
-
-            //            if (this.EnableShowImage)
-            //            {
-            //                imgHyperLink = new HyperLink();
-            //                imgHyperLink.ImageUrl = tweet.User.ProfileImageLocation;
-            //                imgHyperLink.NavigateUrl = "http://twitter.com/" + tweet.User.ScreenName;
-            //                imgHyperLink.Attributes.Add("target", "_blank");
-            //                tc2.Width = Unit.Percentage(10);
-            //                tc2.RowSpan = 2;
-            //                tr.Cells.Add(tc2);
-            //                tc2.Controls.Add(imgHyperLink);
-            //            }
-            //            tc = new TableCell();
-            //            tr.Cells.Add(tc);
-
-            //            if (tweet.Entities.Count > 0)
-            //            {
-            //                int tweetCount = Convert.ToInt32(tweet.Entities.Count);
-
-            //                for (int tweetEntityCount = 0; tweetEntityCount < tweetCount; tweetEntityCount++)
-            //                {
-            //                    //Check if the tweet is having the Picture
-            //                    if (tweet.Entities[tweetEntityCount].ToString().Equals("Twitterizer.Entities.TwitterMediaEntity"))
-            //                    {
-            //                        if (!string.IsNullOrEmpty(((Twitterizer.Entities.TwitterMediaEntity)(tweet.Entities[tweetEntityCount])).MediaUrl.ToString()))
-            //                        {
-            //                            //get the image URL
-            //                            string ImageURL = ((Twitterizer.Entities.TwitterMediaEntity)(tweet.Entities[tweetEntityCount])).MediaUrl.ToString();
-
-            //                            //Create a New table inside the td and add image and text inside this table
-            //                            Table innerTable = new Table();
-            //                            TableRow innerRow = new TableRow();
-            //                            TableCell innerImageCell = new TableCell();
-            //                            TableCell innerTextCell = new TableCell();
-            //                            tc.Controls.Add(innerTable);
-            //                            innerTable.Rows.Add(innerRow);
-            //                            innerRow.Cells.Add(innerImageCell);
-            //                            innerRow.Cells.Add(innerTextCell);
-
-
-            //                            HyperLink imgTweet = new HyperLink();
-            //                            imgTweet.NavigateUrl = ImageURL;
-            //                            imgTweet.Attributes.Add("target", "_blank");
-
-            //                            //Added the HTMLImage Control to resize the image
-            //                            HtmlImage htmlImage = new HtmlImage();
-            //                            htmlImage.Src = ImageURL;
-            //                            htmlImage.Height = 150;
-            //                            htmlImage.Width = 180;
-            //                            htmlImage.Border = 0;
-            //                            imgTweet.Controls.Add(htmlImage);
-
-            //                            innerImageCell.Controls.Add(imgTweet);
-
-            //                            //Show the text next to the Image
-
-            //                            //Add the linkfied text
-            //                            Caption = new Label();
-            //                            Caption.Text = tweet.LinkifiedText();
-            //                            innerTextCell.Controls.Add(Caption);
-
-            //                            isTweetOnlyText = false;
-
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //            if (isTweetOnlyText)
-            //            {
-            //                tc.Width = Unit.Percentage(90);
-            //                tr.Cells.Add(tc);
-            //                Caption = new Label();
-            //                Caption.Text = tweet.LinkifiedText();
-            //                tc.Controls.Add(Caption);
-            //            }
-
-            //            tr2 = new TableRow();
-            //            tc3 = new TableCell();
-
-            //            if (this.EnableShowDesc)
-            //            {
-            //                tc3.VerticalAlign = VerticalAlign.Top;
-            //                mainTable.Rows.Add(tr2);
-            //                tr2.Cells.Add(tc3);
-            //                if (tweet.Source.StartsWith("<"))
-            //                    strSource = tweet.Source.Substring(tweet.Source.IndexOf('>') + 1, tweet.Source.LastIndexOf('<') - tweet.Source.IndexOf('>') - 1);
-            //                else
-            //                    strSource = tweet.Source;
-            //                Caption2 = new Label();
-            //                Caption2.Text = relativeTime(tweet.CreatedDate.ToString()) + " via " + strSource;
-            //                Caption2.ForeColor = Color.Gray;
-            //                tc3.Controls.Add(Caption2);
-            //            }
-
-            //            if (i % 2 == 0)
-            //            {
-            //                tr.CssClass = "ms-WPBorderBorderOnly";
-            //                tr.Attributes.Add("style", "border-left: 0px;border-right: 0px;border-bottom: 0px;");
-            //                tr2.CssClass = "ms-WPBorderBorderOnly";
-            //                tr2.Attributes.Add("style", "border-left: 0px;border-right: 0px;border-top: 0px;");
-            //                //tr.CssClass = "";
-            //                //tr2.CssClass = "";
-            //                tc.CssClass = "ms-vb";
-            //                tc2.CssClass = "ms-vb";
-            //                tc3.CssClass = "ms-vb";
-            //                ViewState["alternateBackColor"] = true;
-            //            }
-            //            else
-            //            {
-            //                tr.CssClass = "ms-alternating";
-            //                tr2.CssClass = "ms-alternating";
-            //                tc.CssClass = "ms-vb";
-            //                tc2.CssClass = "ms-vb";
-            //                tc3.CssClass = "ms-vb";
-            //                ViewState["alternateBackColor"] = false;
-            //            }                        
-
-            //        }
-            //        else
-            //        {
-            //            break;
-            //        }
-            //        i++;
-            //    }
-            //}
-            //else
-            //{
-            //    moreTweets = false;
-            //}
-            #endregion
-
             bool isTweetOnlyText = true;
             Table mainTable, innerTable;
             TableRow tr;
@@ -522,9 +398,9 @@ namespace BrickRed.WebParts.Twitter
             this.Controls.Add(mainTable);
 
 
-            if (userTimeline.ResponseObject.Count > 0)
+            if (tweets.Count > 0)
             {
-                foreach (TwitterStatus tweet in userTimeline.ResponseObject)
+                foreach (TwitterStatus tweet in tweets)
                 {
                     isTweetOnlyText = true;
                     innerTable = new Table();
@@ -674,13 +550,39 @@ namespace BrickRed.WebParts.Twitter
                 imgNoTweet.Visible = true;
             }
             // if the number of tweet response is less than the number of tweets demanded than there are no more tweets : show grey tweet
-            if (userTimeline.ResponseObject.Count < this.TweetCount * PageNumber)
+            if (tweets.Count < this.TweetCount * PageNumber)
             {
                 imgMoreTweet.Visible = false;
                 imgNoTweet.Visible = true;
             }
             return mainTable;
         }
+
+        /// <summary>
+        /// Remove the dependent cache objects if primary cache is removed 
+        /// </summary>
+        /// <returns></returns>
+        private void CacheRemovedCallBack(string key, object value, CacheItemRemovedReason reason)
+        {
+            int counter = 1;
+            // If my first page cache is removed then remove all the other caches also
+            if (key.Equals(string.Format("Tweet-{0}", counter)))
+            {
+                while (true)
+                {
+                    counter++;
+                    if (HttpContext.Current.Cache.Get(string.Format("Tweet-{0}", counter)) != null)
+                    {
+                        HttpContext.Current.Cache.Remove(string.Format("Tweet-{0}", counter));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Gets the relative time in seconds upto years
@@ -757,16 +659,6 @@ namespace BrickRed.WebParts.Twitter
             return strReturn;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            //Creates the hidden field for keeping the page info
-            CreateHiddenField();
-
-            //Get the Css Class
-            this.Page.Header.Controls.Add(StyleSheet.CssStyle());
-            base.OnLoad(e);
-        }
-
         /// <summary>
         /// Creates the hidden field for keeping the page info
         /// </summary>
@@ -801,32 +693,16 @@ namespace BrickRed.WebParts.Twitter
                     ViewState["objPageCountId"] = objPageCount.ClientID;
                 }
 
-//                if (imgMoreTweet != null)
-//                {
-
-//                    scriptHideImageonLoad = @"<script language='javascript' type='text/javascript'>
-//                                                    function HideImage(id)
-//                                                     {
-//                                                        document.getElementById('" + ViewState["objPageCountId"] + @"').value = id;
-//                                                        
-//                                                        document.getElementById('" + imgMoreTweet.ClientID + @"').style.display = 'none';
-//                                                     }
-//                                                    </script>";
-//                }
-//                else
-//                {
                     scriptHideImageonLoad = @"<script language='javascript' type='text/javascript'>
                                                     function HideImage(id)
                                                      {
                                                         document.getElementById('" + ViewState["objPageCountId"] + @"').value = id;
                                                      }
                                                     </script>";
-                //}
                 this.Page.ClientScript.RegisterStartupScript(this.GetType(), "scriptHideImageonLoad", scriptHideImageonLoad);
                 imgMoreTweet.OnClientClick = "javascript:HideImage('" + Convert.ToString(Convert.ToInt32(objPageCount.Value) + 1) + "');";
             }
             base.OnPreRender(e);
         }
-
     }
 }
