@@ -14,9 +14,3 @@
 = Next Step : Twitter Configuration=
 
 You can [ApplicationRegistrationTwitter register] application on Twitter with our step by step registration guide.
-
-== Alternate Step : WSP Upgradation==
-  # Take a backup of all your webpart settings in a text document.
-  # Now execute the retractsolution.bat file and remove the previous version of this solution.
-  # Now delete all the webparts already configured with the previous version of this package
-  # Install new wsp file and configure the webparts again 
