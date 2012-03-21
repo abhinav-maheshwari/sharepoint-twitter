@@ -12,6 +12,8 @@ namespace BrickRed.Webparts.Twitter
 {
     static class Common
     {
+        public static int CACHEDURATION = 15;
+
         /// <summary>
         /// Creates the header and footer
         /// </summary>
@@ -20,7 +22,7 @@ namespace BrickRed.Webparts.Twitter
         /// <param name="ShowHeaderImage"></param>
         /// <param name="ShowFollowUs"></param>
         /// <returns></returns>
-        public static Table CreateHeaderFooter(string Type, TwitterResponse<TwitterStatusCollection> userInfo, bool ShowHeaderImage, bool ShowFollowUs)
+        public static Table CreateHeaderFooter(string Type, TwitterStatusCollection tweets, bool ShowHeaderImage, bool ShowFollowUs)
         {
             Table tbHF;
             TableRow trHF;
@@ -49,18 +51,17 @@ namespace BrickRed.Webparts.Twitter
                 tbinner.Width = Unit.Percentage(100);
                 TableRow trinner = new TableRow();
                 TableCell tcinner = new TableCell();
-                tbinner.CssClass = "twitHeaderBorder";
 
                 //Adding the Header Image
                 if (ShowHeaderImage)
                 {
                     HtmlImage image = new HtmlImage();
-                    image.Src = userInfo.ResponseObject[0].User.ProfileImageLocation;
+                    image.Src = tweets[0].User.ProfileImageLocation;
                     image.Height = 22;
                     image.Width = 35;
                     image.Border = 0;
                     HyperLink hplnkImage = new HyperLink();
-                    hplnkImage.NavigateUrl = "http://twitter.com/" + userInfo.ResponseObject[0].User.ScreenName;
+                    hplnkImage.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
                     hplnkImage.Attributes.Add("target", "_blank");
                     hplnkImage.Controls.Add(image);
                     tcinner.Controls.Add(hplnkImage);
@@ -72,8 +73,8 @@ namespace BrickRed.Webparts.Twitter
                 //Creating the name hyperlink in header
                 tcinner = new TableCell();
                 HyperLink hplnkName = new HyperLink();
-                hplnkName.Text = userInfo.ResponseObject[0].User.Name;
-                hplnkName.NavigateUrl = "http://twitter.com/" + userInfo.ResponseObject[0].User.ScreenName;
+                hplnkName.Text = tweets[0].User.Name;
+                hplnkName.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
                 hplnkName.Attributes.Add("target", "_blank");
                 tcinner.Controls.Add(hplnkName);
                 tcinner.VerticalAlign = VerticalAlign.Middle;
@@ -97,7 +98,7 @@ namespace BrickRed.Webparts.Twitter
                 tcHF.CssClass = "twitHeaderBorder";
                 trHF.Cells.Add(tcHF);
 
-                tbHF.CssClass = "twitHeaderBorder";
+              
             }
             #endregion
 
@@ -118,7 +119,7 @@ namespace BrickRed.Webparts.Twitter
                     HyperLink hplnkJoinus = new HyperLink();
                     hplnkJoinus.Text = "Follow Us";
                     hplnkJoinus.ForeColor = Color.White;
-                    hplnkJoinus.NavigateUrl = "https://twitter.com/" + userInfo.ResponseObject[0].User.ScreenName;
+                    hplnkJoinus.NavigateUrl = "https://twitter.com/" + tweets[0].User.ScreenName;
                     hplnkJoinus.Attributes.Add("target", "_blank");
                     tcHF.Controls.Add(hplnkJoinus);
                     tcHF.CssClass = "padding-align-right , twitFooterBorder";
@@ -142,7 +143,7 @@ namespace BrickRed.Webparts.Twitter
         /// <param name="twitterResponse">Twiiter object from which count can be retrieved</param>
         /// <param name="userInfo">Twiiter object from which user info can be retrieved</param>
         /// <returns></returns>
-        public static Table ShowDisplayCount(string Type, TwitterResponse<TwitterUserCollection> twitterResponse, TwitterResponse<TwitterStatusCollection> userInfo)
+        public static Table ShowDisplayCount(string Type, TwitterResponse<TwitterUserCollection> twitterResponse, TwitterStatusCollection tweets)
         {
             Table tb = new Table();
             tb.Width = Unit.Percentage(100);
@@ -158,7 +159,7 @@ namespace BrickRed.Webparts.Twitter
                 lblDisplayFollowerCount.ForeColor = Color.Black;
 
                 Label lblScreenName = new Label();
-                lblScreenName.Text = "@" + userInfo.ResponseObject[0].User.Name;
+                lblScreenName.Text = "@" + tweets[0].User.Name;
                 lblScreenName.Font.Bold = true;
                 lblScreenName.Font.Size = FontUnit.XXSmall;
                 lblScreenName.ForeColor = Color.Black;
@@ -174,7 +175,7 @@ namespace BrickRed.Webparts.Twitter
                 int followCount = Convert.ToInt32(twitterResponse.ResponseObject.Count);
 
                 Label lblScreenName = new Label();
-                lblScreenName.Text = "@" + userInfo.ResponseObject[0].User.Name;
+                lblScreenName.Text = "@" + tweets[0].User.Name;
                 lblScreenName.Font.Bold = true;
                 lblScreenName.Font.Size = FontUnit.XXSmall;
                 lblScreenName.ForeColor = Color.Black;

@@ -11,8 +11,7 @@ namespace BrickRed.Webparts.Twitter
         public static Literal CssStyle()
         {
             Literal cssTextCntrl = new Literal();
-
-            //cssTextCntrl.Text = "<link href='/_layouts/Brickred.OpenSource.Twitter/style.css' rel='stylesheet' type='text/css' />";
+            
             #region CSS
             cssTextCntrl.Text = "<style type=\"text/css\" rel=\"stylesheet\">" +
                                     @".ms-wpContentDivSpace
@@ -88,7 +87,7 @@ namespace BrickRed.Webparts.Twitter
                                             background-repeat:no-repeat;
                                             width:50px !important;
                                             valign:middle !important;
-                                            padding:5px 20px;
+                                            padding:5px 5px 5px 38px;
                                         }
                                 </style>";
             #endregion

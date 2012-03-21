@@ -35,6 +35,7 @@ using System.Web.UI.HtmlControls;
 using System.Drawing;
 using Microsoft.SharePoint.Utilities;
 using System.Diagnostics;
+using System.Web.Caching;
 
 namespace BrickRed.Webparts.Twitter
 {
@@ -42,24 +43,17 @@ namespace BrickRed.Webparts.Twitter
     public class ShowTweets : Microsoft.SharePoint.WebPartPages.WebPart
     {
         #region Declarations
-
         TableCell tcContent;
         ImageButton imgbtnNext = null;
         TableCell tcpaging;
         string ImagePath = SPContext.Current.Web.Url + "/_layouts/Brickred.OpenSource.Twitter/";
         System.Web.UI.WebControls.Image imgNoTweet;
-        TwitterResponse<TwitterStatusCollection> userTimeline = null;
         Table mainTable;
         UpdatePanel updtPanel;
         HiddenField objPageCount;
         string PageCountValue = string.Empty;
 
         #endregion
-        Stopwatch sw = new Stopwatch();
-
-        public ShowTweets()
-        {
-        }
 
         #region Webpart Properties
 
@@ -200,6 +194,24 @@ namespace BrickRed.Webparts.Twitter
 
         #endregion
 
+        /// <summary>
+        /// Page load event
+        /// </summary>
+        /// <returns></returns>
+        protected override void OnLoad(EventArgs e)
+        {
+            //Creates the hidden field for keeping the page info
+            CreateHiddenField();
+
+            //Get the Css Class
+            this.Page.Header.Controls.Add(StyleSheet.CssStyle());
+            base.OnLoad(e);
+        }
+
+        /// <summary>
+        /// Create child controls for this webpart
+        /// </summary>
+        /// <returns></returns>
         protected override void CreateChildControls()
         {
             base.CreateChildControls();
@@ -214,7 +226,6 @@ namespace BrickRed.Webparts.Twitter
                 {
                     //get the page count value from the hidden field
                     PageCountValue = GetPageNumber();
-
                     ShowPagedTweets(Convert.ToInt32(PageCountValue));
                 }
                 else
@@ -279,6 +290,13 @@ namespace BrickRed.Webparts.Twitter
         /// </summary>
         private void ShowPagedTweets(int PageNumber)
         {
+            TwitterStatusCollection tweets;
+
+            //First fetch the action tweets here
+            tweets = FetchTweets(PageNumber);
+
+
+            //create the update panels and show the tweets
             updtPanel = new UpdatePanel();
             ScriptManager script = new ScriptManager();
             UpdateProgress updtProgress = new UpdateProgress();
@@ -309,7 +327,9 @@ namespace BrickRed.Webparts.Twitter
             TableRow trContent = new TableRow();
             tcContent = new TableCell();
 
-            tcContent.Controls.Add(GetTweet(PageNumber));
+            //add tweet table here
+            tcContent.Controls.Add(CreateTweetTable(PageNumber, tweets));
+
             trContent.Cells.Add(tcContent);
             mainTable.Rows.Add(trContent);
 
@@ -327,7 +347,7 @@ namespace BrickRed.Webparts.Twitter
             updtProgress.ProgressTemplate = new ProgressTemplate();
 
             if (this.ShowHeader)
-                updtPanel.ContentTemplateContainer.Controls.Add(Common.CreateHeaderFooter("Header", userTimeline, this.ShowHeaderImage, this.ShowFollowUs));
+                updtPanel.ContentTemplateContainer.Controls.Add(Common.CreateHeaderFooter("Header", tweets, this.ShowHeaderImage, this.ShowFollowUs));
 
             updtPanel.ContentTemplateContainer.Controls.Add(mainTable);
             updtPanel.ContentTemplateContainer.Controls.Add(pagingTable);
@@ -340,7 +360,7 @@ namespace BrickRed.Webparts.Twitter
             this.Controls.Add(updtPanel);
             this.Controls.Add(updtProgress);
             if (this.ShowFooter)
-                this.Controls.Add(Common.CreateHeaderFooter("Footer", userTimeline, this.ShowHeaderImage, this.ShowFollowUs));
+                this.Controls.Add(Common.CreateHeaderFooter("Footer", tweets, this.ShowHeaderImage, this.ShowFollowUs));
         }
 
         /// <summary>
@@ -348,25 +368,55 @@ namespace BrickRed.Webparts.Twitter
         /// </summary>
         /// <param name="PageNumber"></param>
         /// <returns></returns>
-        private Table GetTweet(int PageNumber)
+        private TwitterStatusCollection FetchTweets(int PageNumber)
+        {
+            TwitterStatusCollection tweets = new TwitterStatusCollection();
+
+            //cache the tweets here
+            if (Page.Cache[string.Format("Tweet-{0}", PageNumber)] == null)
+            {
+                //set the tokens here
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+
+                UserTimelineOptions options = new UserTimelineOptions();
+                options.Count = this.TweetCount * PageNumber;
+                options.Page = 1;
+                options.ScreenName = this.ScreenName;
+
+
+                //now hit the twitter and get the response
+                tweets = TwitterTimeline.UserTimeline(tokens, options).ResponseObject;
+
+                if (PageNumber == 1)
+                {
+                    HttpContext.Current.Cache.Add(string.Format("Tweet-{0}", PageNumber), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, CacheRemovedCallBack);
+                }
+                else
+                {
+                    HttpContext.Current.Cache.Insert(string.Format("Tweet-{0}", PageNumber), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+                }
+            }
+            else
+            {
+                tweets = HttpContext.Current.Cache[string.Format("Tweet-{0}", PageNumber)] as TwitterStatusCollection;
+            }
+
+            return tweets;
+        }
+
+        /// <summary>
+        /// Generates the tweet table
+        /// </summary>
+        /// <param name="PageNumber"></param>
+        /// <returns></returns>
+        private Table CreateTweetTable(int PageNumber, TwitterStatusCollection tweets)
         {
             int i = 0;
-
-            #region Set Twitter Token and Twitter Options
-            OAuthTokens tokens = new OAuthTokens();
-            tokens.ConsumerKey = this.ConsumerKey;
-            tokens.ConsumerSecret = this.ConsumerSecret;
-            tokens.AccessToken = this.AccessToken;
-            tokens.AccessTokenSecret = this.AccessTokenSecret;
-
-            UserTimelineOptions options = new UserTimelineOptions();
-            options.Count = this.TweetCount * PageNumber;
-            options.Page = 1;
-            options.ScreenName = this.ScreenName;
-
-            userTimeline = TwitterTimeline.UserTimeline(tokens, options);
-            #endregion
-
             bool isTweetOnlyText = true;
             Table mainTable, innerTable;
             TableRow tr;
@@ -382,16 +432,16 @@ namespace BrickRed.Webparts.Twitter
             this.Controls.Add(mainTable);
 
 
-            if (userTimeline.ResponseObject.Count > 0)
+            if (tweets.Count > 0)
             {
-                foreach (TwitterStatus tweet in userTimeline.ResponseObject)
+                foreach (TwitterStatus tweet in tweets)
                 {
                     isTweetOnlyText = true;
                     innerTable = new Table();
                     innerTable.CssClass = "ms-viewlsts";
                     innerTable.Width = Unit.Percentage(100);
 
-                    if (i <= this.TweetCount * PageNumber)
+                    if ( i <= this.TweetCount * PageNumber)
                     {
                         tr = new TableRow();
                         mainTable.Rows.Add(tr);
@@ -534,12 +584,37 @@ namespace BrickRed.Webparts.Twitter
                 imgNoTweet.Visible = true;
             }
             // if the number of tweet response is less than the number of tweets demanded than there are no more tweets : show grey tweet
-            if (userTimeline.ResponseObject.Count < this.TweetCount * PageNumber)
+            if (tweets.Count < this.TweetCount * PageNumber)
             {
                 imgbtnNext.Visible = false;
                 imgNoTweet.Visible = true;
             }
             return mainTable;
+        }
+
+        /// <summary>
+        /// Remove the dependent cache objects if primary cache is removed 
+        /// </summary>
+        /// <returns></returns>
+        private void CacheRemovedCallBack(string key, object value, CacheItemRemovedReason reason)
+        {
+            int counter = 1;
+            // If my first page cache is removed then remove all the other caches also
+            if (key.Equals(string.Format("Tweet-{0}", counter)))
+            {
+                while (true)
+                {
+                    counter++;
+                    if (HttpContext.Current.Cache.Get(string.Format("Tweet-{0}", counter)) != null)
+                    {
+                        HttpContext.Current.Cache.Remove(string.Format("Tweet-{0}", counter));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -596,16 +671,6 @@ namespace BrickRed.Webparts.Twitter
             return strReturn;
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            //Creates the hidden field for keeping the page info
-            CreateHiddenField();
-
-            //Get the Css Class
-            this.Page.Header.Controls.Add(StyleSheet.CssStyle());
-            base.OnLoad(e);
-        }
-
         /// <summary>
         /// Creates the hidden field for keeping the page info
         /// </summary>
@@ -651,7 +716,6 @@ namespace BrickRed.Webparts.Twitter
                                                     function HideImage(id)
                                                      {
                                                         document.getElementById('" + ViewState["objPageCountId"] + @"').value = id;
-                                                        
                                                         document.getElementById('" + imgbtnNext.ClientID + @"').style.display = 'none';
                                                      }
                                                     </script>";
@@ -667,7 +731,6 @@ namespace BrickRed.Webparts.Twitter
                 }
                 this.Page.ClientScript.RegisterStartupScript(this.GetType(), "scriptHideImageonLoad", scriptHideImageonLoad);
                 imgbtnNext.OnClientClick = "javascript:HideImage('" + Convert.ToString(Convert.ToInt32(objPageCount.Value) + 1) + "');";
-                userTimeline = null;
             }
             base.OnPreRender(e);
         }

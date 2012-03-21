@@ -255,10 +255,9 @@ namespace BrickRed.Webparts.Twitter
             //Adding the Tweet Count button
             tc = new TableCell();
             tc.HorizontalAlign = HorizontalAlign.Center;
-            tc.VerticalAlign = VerticalAlign.Middle;
+            tc.Width = Unit.Pixel(57);
             tc.Wrap = false;
             lblTweets = new Label();
-            lblTweets.Text = "0000";
             lblTweets.CssClass = "tweetCountButton";
             tc.Controls.Add(lblTweets);
             tr.Cells.Add(tc);
@@ -302,7 +301,16 @@ namespace BrickRed.Webparts.Twitter
                         tokens.AccessTokenSecret = this.AccessTokenSecret;
                         userInfo = TwitterTimeline.UserTimeline(tokens);
                     }
-                    lblTweets.Text = userInfo.ResponseObject.Count.ToString();
+
+                    if (userInfo.ResponseObject.Count < 10000)
+                    {
+                        lblTweets.Text = userInfo.ResponseObject.Count.ToString();
+                    }
+                    else
+                    {
+                        lblTweets.Text = "10000+";
+
+                    }
                 }
 
                 //Get the Css Class
@@ -357,33 +365,43 @@ namespace BrickRed.Webparts.Twitter
             {
                 if (userInfo == null)
                 {
-                    //create a authorization token of the user
-                    OAuthTokens tokens = new OAuthTokens();
-                    tokens.ConsumerKey = this.ConsumerKey;
-                    tokens.ConsumerSecret = this.ConsumerSecret;
-                    tokens.AccessToken = this.AccessToken;
-                    tokens.AccessTokenSecret = this.AccessTokenSecret;
+                    //use cache here
+                    if (Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] == null)
+                    {
 
-                    //Set the query options
+                        //create a authorization token of the user
+                        OAuthTokens tokens = new OAuthTokens();
+                        tokens.ConsumerKey = this.ConsumerKey;
+                        tokens.ConsumerSecret = this.ConsumerSecret;
+                        tokens.AccessToken = this.AccessToken;
+                        tokens.AccessTokenSecret = this.AccessTokenSecret;
 
-                    UserTimelineOptions Useroptions = new UserTimelineOptions();
-                    Useroptions.ScreenName = this.ScreenName;
+                        //Set the query options
 
-                    //Get the account info
-                    userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+                        UserTimelineOptions Useroptions = new UserTimelineOptions();
+                        Useroptions.ScreenName = this.ScreenName;
+
+                        //Get the account info
+                        userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+                        HttpContext.Current.Cache.Insert(string.Format("TweetWrite-{0}", this.ScreenName), userInfo, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+                    }
+                    else
+                    {
+                        userInfo = Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] as TwitterResponse<TwitterStatusCollection>;
+                    }
                 }
 
                 #region Header
                 if (Type.Equals("Header"))
                 {
-                    tbHF = Common.CreateHeaderFooter("Header", userInfo, this.ShowHeaderImage, this.ShowFollowUs);
+                    tbHF = Common.CreateHeaderFooter("Header", userInfo.ResponseObject, this.ShowHeaderImage, this.ShowFollowUs);
                 }
                 #endregion
 
                 #region Footer
                 if (Type.Equals("Footer"))
                 {
-                    tbHF = Common.CreateHeaderFooter("Footer", userInfo, this.ShowHeaderImage, this.ShowFollowUs);
+                    tbHF = Common.CreateHeaderFooter("Footer", userInfo.ResponseObject, this.ShowHeaderImage, this.ShowFollowUs);
                 }
                 #endregion
             }

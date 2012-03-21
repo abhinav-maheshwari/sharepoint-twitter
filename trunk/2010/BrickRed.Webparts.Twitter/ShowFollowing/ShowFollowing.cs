@@ -18,13 +18,10 @@ namespace BrickRed.Webparts.Twitter
     public class ShowFollowing : Microsoft.SharePoint.WebPartPages.WebPart
     {
         #region Declarations
-
-        TwitterResponse<TwitterUserCollection> twitterResponse = null;  //To get the Following people information
-        TwitterResponse<TwitterStatusCollection> userInfo = null;       // to get the account information
+        
         Table mainTable;
 
         #endregion
-        Stopwatch sw = new Stopwatch();
 
         #region WebPart Properties
 
@@ -191,7 +188,9 @@ namespace BrickRed.Webparts.Twitter
                     !string.IsNullOrEmpty(this.ScreenName))
                 {
                     // Get the Twitter response for the Following and the User
-                    GetTwitterResponse();
+
+                    TwitterResponse<TwitterUserCollection> twitterUsers = GetTwitterFriends();
+                    TwitterResponse<TwitterStatusCollection> twitterStatus = GetTwitterTimeLine();
 
                     //creating WebPart structure
                     TableRow tr;
@@ -207,17 +206,17 @@ namespace BrickRed.Webparts.Twitter
                     {
                         tr = new TableRow();
                         tc = new TableCell();
-                        tc.Controls.Add(Common.CreateHeaderFooter("Header", userInfo, this.ShowHeaderImage, this.ShowFollowUs));
+                        tc.Controls.Add(Common.CreateHeaderFooter("Header", twitterStatus.ResponseObject, this.ShowHeaderImage, this.ShowFollowUs));
                         tr.Cells.Add(tc);
                         mainTable.Rows.Add(tr);
                     }
 
                     //Create the Count display section
-                    if (this.ShowHeader && twitterResponse.ResponseObject.Count > 0)
+                    if (this.ShowHeader && twitterUsers.ResponseObject.Count > 0)
                     {
                         tr = new TableRow();
                         tc = new TableCell();
-                        tc.Controls.Add(Common.ShowDisplayCount("Following", twitterResponse, userInfo));
+                        tc.Controls.Add(Common.ShowDisplayCount("Following", twitterUsers, twitterStatus.ResponseObject));
                         tr.Cells.Add(tc);
                         mainTable.Rows.Add(tr);
                     }
@@ -225,7 +224,7 @@ namespace BrickRed.Webparts.Twitter
                     //Contents
                     tr = new TableRow();
                     tc = new TableCell();
-                    tc.Controls.Add(GetFollowing());
+                    tc.Controls.Add(GetFollowing(twitterUsers, twitterStatus));
                     tr.Cells.Add(tc);
                     mainTable.Rows.Add(tr);
                     this.Controls.Add(mainTable);
@@ -235,7 +234,7 @@ namespace BrickRed.Webparts.Twitter
                     {
                         tr = new TableRow();
                         tc = new TableCell();
-                        tc.Controls.Add(Common.CreateHeaderFooter("Footer", userInfo, this.ShowHeaderImage, this.ShowFollowUs));
+                        tc.Controls.Add(Common.CreateHeaderFooter("Footer", twitterStatus.ResponseObject, this.ShowHeaderImage, this.ShowFollowUs));
                         tr.Cells.Add(tc);
                         mainTable.Rows.Add(tr);
                     }
@@ -260,7 +259,7 @@ namespace BrickRed.Webparts.Twitter
         /// Get the following users
         /// </summary>
         /// <returns></returns>
-        private Table GetFollowing()
+        private Table GetFollowing(TwitterResponse<TwitterUserCollection> twitterUsers, TwitterResponse<TwitterStatusCollection> twitterStatus)
         {
             Table insideTable;
             TableRow tr = null;
@@ -274,13 +273,13 @@ namespace BrickRed.Webparts.Twitter
             int r = 1;
             tr = new TableRow();
 
-            if (twitterResponse.ResponseObject.Count > 0)
+            if (twitterUsers.ResponseObject.Count > 0)
             {
                 //Get the total number of followers
-                int followersCount = Convert.ToInt32(twitterResponse.ResponseObject.Count);
+                int followersCount = Convert.ToInt32(twitterUsers.ResponseObject.Count);
                 int c = 0;
 
-                foreach (TwitterUser followingUsers in twitterResponse.ResponseObject)
+                foreach (TwitterUser followingUsers in twitterUsers.ResponseObject)
                 {
                     //Create a new row if Usercount limit exceeds
                     if (this.UsersColumnCount == c)
@@ -384,7 +383,7 @@ namespace BrickRed.Webparts.Twitter
                 tr = new TableRow();
                 tc = new TableCell();
                 Label lblScreenName = new Label();
-                lblScreenName.Text = "@" + userInfo.ResponseObject[0].User.Name;
+                lblScreenName.Text = "@" + twitterStatus.ResponseObject[0].User.Name;
                 lblScreenName.Font.Size = FontUnit.Large;
                 lblScreenName.ForeColor = Color.Gray;
                 Label lblMessage = new Label();
@@ -402,34 +401,71 @@ namespace BrickRed.Webparts.Twitter
         }
 
         /// <summary>
-        /// Get the Twitter response object for the following and the User
+        /// Get the Twitter response object for the friends
         /// </summary>
         /// <returns></returns>
-        private void GetTwitterResponse()
+        private TwitterResponse<TwitterUserCollection> GetTwitterFriends()
         {
-            //create a authorization token of the user
-            OAuthTokens tokens = new OAuthTokens();
-            tokens.ConsumerKey = this.ConsumerKey;
-            tokens.ConsumerSecret = this.ConsumerSecret;
-            tokens.AccessToken = this.AccessToken;
-            tokens.AccessTokenSecret = this.AccessTokenSecret;
+            TwitterResponse<TwitterUserCollection> twitterResponse = new TwitterResponse<TwitterUserCollection>();
 
-            //Set the query options
-            FriendsOptions Friendoptions = new FriendsOptions();
-            Friendoptions.ScreenName = this.ScreenName;
-            Friendoptions.Cursor = -1;
+            if (Page.Cache[string.Format("TwitterFriends-{0}", this.ScreenName)] == null)
+            {
+                //create a authorization token of the user
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
 
-            //get the Following Object from the Twitter
-            twitterResponse = TwitterFriendship.Friends(tokens, Friendoptions);
+                //Set the query options
+                FriendsOptions Friendoptions = new FriendsOptions();
+                Friendoptions.ScreenName = this.ScreenName;
+                Friendoptions.Cursor = -1;
 
-            //Set the query options
-            UserTimelineOptions Useroptions = new UserTimelineOptions();
-            Useroptions.ScreenName = this.ScreenName;
-            Useroptions.Count = 2;
-            Useroptions.Page = 1;
+                //get the Following Object from the Twitter
+                twitterResponse = TwitterFriendship.Friends(tokens, Friendoptions);
+                HttpContext.Current.Cache.Insert(string.Format("TwitterFriends-{0}", this.ScreenName), twitterResponse, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+            }
+            else
+            {
+                twitterResponse = Page.Cache[string.Format("TwitterFriends-{0}", this.ScreenName)] as TwitterResponse<TwitterUserCollection>;
+            }
 
-            //Get the account info
-            userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+            return twitterResponse;
+        }
+
+        /// <summary>
+        /// Get the Twitter response object for the tweets
+        /// </summary>
+        /// <returns></returns>
+        private TwitterResponse<TwitterStatusCollection> GetTwitterTimeLine()
+        {
+            TwitterResponse<TwitterStatusCollection> userInfo = new TwitterResponse<TwitterStatusCollection>();
+            if (Page.Cache[string.Format("TwitterTimeLine-{0}", this.ScreenName)] == null)
+            {
+                //create a authorization token of the user
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                //Set the query options
+                UserTimelineOptions Useroptions = new UserTimelineOptions();
+                Useroptions.ScreenName = this.ScreenName;
+                Useroptions.Count = 1;
+                Useroptions.Page = 1;
+
+                //Get the account info
+                userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+                HttpContext.Current.Cache.Insert(string.Format("TwitterTimeLine-{0}", this.ScreenName), userInfo, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+            }
+            else
+            {
+                userInfo = Page.Cache[string.Format("TwitterTimeLine-{0}", this.ScreenName)] as TwitterResponse<TwitterStatusCollection>;
+            }
+
+            return userInfo;
         }
 
         /// <summary>
