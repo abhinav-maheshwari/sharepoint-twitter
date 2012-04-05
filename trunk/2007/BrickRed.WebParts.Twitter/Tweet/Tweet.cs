@@ -28,9 +28,7 @@ using System.Runtime.InteropServices;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
-using System.Xml.Serialization;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.WebControls;
 using Microsoft.SharePoint.WebPartPages;
 using System.ComponentModel;
 using Twitterizer;
@@ -206,7 +204,7 @@ namespace BrickRed.WebParts.Twitter
             {
                 tr = new TableRow();
                 tc = new TableCell();
-                tc.ColumnSpan = 2;
+                tc.ColumnSpan = 3;
                 tc.Controls.Add(CreateHeaderFooter("Header"));
                 tr.Cells.Add(tc);
                 mainTable.Rows.Add(tr);
@@ -216,7 +214,7 @@ namespace BrickRed.WebParts.Twitter
             tr = new TableRow();
             mainTable.Rows.Add(tr);
             tc = new TableCell();
-            tc.ColumnSpan = 2;
+            tc.ColumnSpan = 3;
             tr.Cells.Add(tc);
 
             //Create Div for placing the textbox
@@ -239,24 +237,31 @@ namespace BrickRed.WebParts.Twitter
             tr = new TableRow();
             mainTable.Rows.Add(tr);
 
+            //message cell
+
             tc = new TableCell();
+            tr.Cells.Add(tc);
+            LblMessage = new Label();
+            tc.Width = Unit.Percentage(50);
+            tc.Controls.Add(LblMessage);
+
+            //tweet button cell
+            tc = new TableCell();
+            tc.Width = Unit.Percentage(90);
             tc.HorizontalAlign = HorizontalAlign.Right;
-            tc.Width = Unit.Percentage(94);
             buttonTweet = new ImageButton();
             buttonTweet.ImageUrl = "/_layouts/Images/BrickRed/TweetButton.png";
             buttonTweet.Click += new ImageClickEventHandler(buttonTweet_Click);
             tc.Controls.Add(buttonTweet);
             tr.Cells.Add(tc);
 
-            //Adding the tweet count image
+            //Adding the Tweet Count button
             tc = new TableCell();
             tc.HorizontalAlign = HorizontalAlign.Center;
             tc.Width = Unit.Pixel(57);
             tc.Wrap = false;
-            tc.Style.Add("background-image", "/_layouts/Images/BrickRed/TweetCount.png");
-            tc.Style.Add("background-repeat", "no-repeat");
-            tc.Style.Add("width", "56px !important");
             lblTweets = new Label();
+            lblTweets.CssClass = "tweetCountButton";
             tc.Controls.Add(lblTweets);
             tr.Cells.Add(tc);
 
@@ -265,7 +270,7 @@ namespace BrickRed.WebParts.Twitter
             {
                 tr = new TableRow();
                 tc = new TableCell();
-                tc.ColumnSpan = 2;
+                tc.ColumnSpan = 3;
                 tc.Controls.Add(CreateHeaderFooter("Footer"));
                 tr.Cells.Add(tc);
                 mainTable.Rows.Add(tr);
@@ -273,6 +278,75 @@ namespace BrickRed.WebParts.Twitter
 
             this.Controls.Add(mainTable);
 
+
+            //}
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            try
+            {
+                textTweet.Text = "";
+                if (this.EnableShowUserName)
+                    textTweet.Text = SPContext.Current.Web.CurrentUser.Name + " : ";
+
+                if (!string.IsNullOrEmpty(this.ConsumerKey)
+                    && !string.IsNullOrEmpty(this.ConsumerSecret)
+                    && !string.IsNullOrEmpty(this.AccessToken)
+                    && !string.IsNullOrEmpty(this.AccessTokenSecret))
+                {
+                    TwitterResponse<TwitterStatusCollection> userInfo = GetTwitterStatus();
+
+                    if (userInfo.ResponseObject.Count < 10000)
+                    {
+                        lblTweets.Text = userInfo.ResponseObject.Count.ToString();
+                    }
+                    else
+                    {
+                        lblTweets.Text = "10000+";
+
+                    }
+                }
+
+                //Get the Css Class
+                this.Page.Header.Controls.Add(StyleSheet.CssStyle());
+            }
+            catch (Exception Ex)
+            {
+                LblMessage.Text = Ex.Message;
+                LblMessage.ForeColor = Color.Red;
+            }
+        }
+
+        void buttonTweet_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                TwitterResponse<TwitterStatus> Response = TwitterStatus.Update(tokens, textTweet.Text.Trim());
+                if (Response.Result == RequestResult.Success)
+                {
+                    LblMessage.Text = "Message tweeted sucessfully!!!";
+                    LblMessage.ForeColor = Color.Green;
+        }
+                else
+                {
+                    LblMessage.Text = Response.ErrorMessage;
+                    LblMessage.ForeColor = Color.Red;
+
+                }
+            }
+            catch (Exception Ex)
+            {
+                LblMessage.Text = Ex.Message;
+                LblMessage.ForeColor = Color.Red;
+
+            }
         }
 
         /// <summary>
@@ -287,7 +361,6 @@ namespace BrickRed.WebParts.Twitter
             tbHF.Width = Unit.Percentage(100);
             tbHF.CellPadding = 0;
             tbHF.CellSpacing = 0;
-           
 
             if (!string.IsNullOrEmpty(this.ScreenName)
                 && !string.IsNullOrEmpty(this.ConsumerKey)
@@ -312,54 +385,6 @@ namespace BrickRed.WebParts.Twitter
                 #endregion
             }
             return tbHF;
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-
-            try
-            {
-                TwitterResponse<TwitterStatusCollection> userInfo = GetTwitterStatus();
-                textTweet.Text = "";
-                if (this.EnableShowUserName)
-                    textTweet.Text = SPContext.Current.Web.CurrentUser.Name + " : ";
-               
-                if (userInfo.ResponseObject.Count < 10000)
-                {
-                    lblTweets.Text = userInfo.ResponseObject.Count.ToString();
-                }
-                else
-                {
-                    lblTweets.Text = "10000+";
-                }
-
-            }
-            catch (Exception Ex)
-            {
-                LblMessage = new Label();
-                LblMessage.Text = Ex.Message;
-                this.Controls.Add(LblMessage);
-            }
-        }
-
-        void buttonTweet_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                OAuthTokens tokens = new OAuthTokens();
-                tokens.ConsumerKey = this.ConsumerKey;
-                tokens.ConsumerSecret = this.ConsumerSecret;
-                tokens.AccessToken = this.AccessToken;
-                tokens.AccessTokenSecret = this.AccessTokenSecret;
-                TwitterStatus.Update(tokens, textTweet.Text.Trim());
-            }
-
-            catch (Exception Ex)
-            {
-                Label LblMessage = new Label();
-                LblMessage.Text = Ex.Message;
-                this.Controls.Add(LblMessage);
-            }
         }
 
         private TwitterResponse<TwitterStatusCollection> GetTwitterStatus()

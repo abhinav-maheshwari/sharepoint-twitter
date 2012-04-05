@@ -23,13 +23,8 @@
  */
 using System;
 using System.Runtime.InteropServices;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
-using System.Xml.Serialization;
-
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.WebControls;
 using Microsoft.SharePoint.WebPartPages;
 using System.ComponentModel;
 using System.Web.UI.HtmlControls;
@@ -39,10 +34,6 @@ namespace BrickRed.WebParts.Twitter
     [Guid("185d7e70-8216-4b14-9b88-f5584f25c282")]
     public class FollowUs : System.Web.UI.WebControls.WebParts.WebPart
     {
-        public FollowUs()
-        {
-        }
-
         [WebBrowsable(true),
         Category("Twitter Settings"),
         Personalizable(PersonalizationScope.Shared),
@@ -53,7 +44,7 @@ namespace BrickRed.WebParts.Twitter
 
         protected override void CreateChildControls()
         {
-            if (!string.IsNullOrEmpty(this.ScreenName))
+            if (!string.IsNullOrEmpty(this.ScreenName.Trim()))
             {
                 HtmlAnchor ancFollowUs = new HtmlAnchor();
                 ancFollowUs.HRef = "https://twitter.com/" + this.ScreenName.Trim() ;

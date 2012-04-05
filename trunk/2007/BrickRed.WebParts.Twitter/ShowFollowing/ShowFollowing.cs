@@ -21,16 +21,12 @@
  THE SOFTWARE.
  ===========================================================================
  */
-
 using System;
 using System.Runtime.InteropServices;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
-using System.Xml.Serialization;
-
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.WebControls;
 using Microsoft.SharePoint.WebPartPages;
 using System.Web.UI.HtmlControls;
 using Twitterizer;
@@ -43,12 +39,10 @@ namespace BrickRed.WebParts.Twitter
     [Guid("66b5cb21-d9ea-43c1-b486-9eb0971b4425")]
     public class ShowFollowing : System.Web.UI.WebControls.WebParts.WebPart
     {
-        public ShowFollowing()
-        {
-        }
-
         #region Declarations
+
         Table mainTable;
+
         #endregion
 
         #region WebPart Properties
@@ -107,7 +101,7 @@ namespace BrickRed.WebParts.Twitter
             set { _usersColumnCount = value; }
         }
 
-        private int _usersRowCount = 3;
+        private int _usersRowCount = 2;
         [WebBrowsable(true),
         Category("Twitter Settings"),
         Personalizable(PersonalizationScope.Shared),
@@ -216,6 +210,7 @@ namespace BrickRed.WebParts.Twitter
                     !string.IsNullOrEmpty(this.ScreenName))
                 {
                     // Get the Twitter response for the Following and the User
+
                     TwitterResponse<TwitterUserCollection> twitterUsers = GetTwitterFriends();
                     TwitterResponse<TwitterStatusCollection> twitterStatus = GetTwitterTimeLine();
 
@@ -254,6 +249,7 @@ namespace BrickRed.WebParts.Twitter
                     tc.Controls.Add(GetFollowing(twitterUsers, twitterStatus));
                     tr.Cells.Add(tc);
                     mainTable.Rows.Add(tr);
+                    this.Controls.Add(mainTable);
 
                     //Create Footer
                     if (this.ShowFooter)
@@ -264,9 +260,6 @@ namespace BrickRed.WebParts.Twitter
                         tr.Cells.Add(tc);
                         mainTable.Rows.Add(tr);
                     }
-
-                    this.Controls.Add(mainTable);
-
                 }
                 else
                 {
@@ -437,27 +430,22 @@ namespace BrickRed.WebParts.Twitter
         {
             TwitterResponse<TwitterUserCollection> twitterResponse = new TwitterResponse<TwitterUserCollection>();
 
-
-
-
-
-
             if (Page.Cache[string.Format("TwitterFriends-{0}", this.ScreenName)] == null)
-            {
-                //create a authorization token of the user
-                OAuthTokens tokens = new OAuthTokens();
-                tokens.ConsumerKey = this.ConsumerKey;
-                tokens.ConsumerSecret = this.ConsumerSecret;
-                tokens.AccessToken = this.AccessToken;
-                tokens.AccessTokenSecret = this.AccessTokenSecret;
+        {
+            //create a authorization token of the user
+            OAuthTokens tokens = new OAuthTokens();
+            tokens.ConsumerKey = this.ConsumerKey;
+            tokens.ConsumerSecret = this.ConsumerSecret;
+            tokens.AccessToken = this.AccessToken;
+            tokens.AccessTokenSecret = this.AccessTokenSecret;
 
-                //Set the query options
-                FriendsOptions Friendoptions = new FriendsOptions();
-                Friendoptions.ScreenName = this.ScreenName;
-                Friendoptions.Cursor = -1;
+            //Set the query options
+            FriendsOptions Friendoptions = new FriendsOptions();
+            Friendoptions.ScreenName = this.ScreenName;
+            Friendoptions.Cursor = -1;
 
-                //get the Following Object from the Twitter
-                twitterResponse = TwitterFriendship.Friends(tokens, Friendoptions);
+            //get the Following Object from the Twitter
+            twitterResponse = TwitterFriendship.Friends(tokens, Friendoptions);
                 HttpContext.Current.Cache.Insert(string.Format("TwitterFriends-{0}", this.ScreenName), twitterResponse, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
             }
             else
@@ -466,7 +454,6 @@ namespace BrickRed.WebParts.Twitter
             }
 
             return twitterResponse;
-
         }
 
         /// <summary>
@@ -485,14 +472,14 @@ namespace BrickRed.WebParts.Twitter
                 tokens.AccessToken = this.AccessToken;
                 tokens.AccessTokenSecret = this.AccessTokenSecret;
 
-                //Set the query options
-                UserTimelineOptions Useroptions = new UserTimelineOptions();
-                Useroptions.ScreenName = this.ScreenName;
+            //Set the query options
+            UserTimelineOptions Useroptions = new UserTimelineOptions();
+            Useroptions.ScreenName = this.ScreenName;
                 Useroptions.Count = 1;
-                Useroptions.Page = 1;
+            Useroptions.Page = 1;
 
-                //Get the account info
-                userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+            //Get the account info
+            userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
                 HttpContext.Current.Cache.Insert(string.Format("TwitterTimeLine-{0}", this.ScreenName), userInfo, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
             }
             else
@@ -504,7 +491,7 @@ namespace BrickRed.WebParts.Twitter
         }
 
         /// <summary>
-        /// For registering the JavaScript
+        /// For registering the css
         /// </summary>
         /// <param name="e"></param>
         protected override void OnPreRender(EventArgs e)
