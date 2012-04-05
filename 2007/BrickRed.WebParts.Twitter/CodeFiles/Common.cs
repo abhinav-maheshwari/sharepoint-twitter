@@ -22,15 +22,11 @@
  ===========================================================================
  */
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web.UI.WebControls;
 using System.Drawing;
 using System.Web.UI.HtmlControls;
 using Microsoft.SharePoint;
 using Twitterizer;
-using System.Web.UI;
-using System.IO;
 
 namespace BrickRed.WebParts.Twitter
 {
@@ -85,7 +81,10 @@ namespace BrickRed.WebParts.Twitter
                     image.Width = 35;
                     image.Border = 0;
                     HyperLink hplnkImage = new HyperLink();
-                    hplnkImage.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                    if (tweets.Count > 0)
+                    {
+                        hplnkImage.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                    }
                     hplnkImage.Attributes.Add("target", "_blank");
                     hplnkImage.Controls.Add(image);
                     tcinner.Controls.Add(hplnkImage);
@@ -97,8 +96,11 @@ namespace BrickRed.WebParts.Twitter
                 //Creating the name hyperlink in header
                 tcinner = new TableCell();
                 HyperLink hplnkName = new HyperLink();
-                hplnkName.Text = tweets[0].User.Name;
-                hplnkName.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                if (tweets.Count > 0)
+                {
+                    hplnkName.Text = tweets[0].User.Name;
+                    hplnkName.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                }
                 hplnkName.Attributes.Add("target", "_blank");
                 tcinner.Controls.Add(hplnkName);
                 tcinner.VerticalAlign = VerticalAlign.Middle;
@@ -121,7 +123,8 @@ namespace BrickRed.WebParts.Twitter
                 tcHF.Controls.Add(tbinner);
                 tcHF.CssClass = "twitHeaderBorder";
                 trHF.Cells.Add(tcHF);
-                tbHF.CssClass = "twitHeaderBorder";
+
+
             }
             #endregion
 
@@ -142,10 +145,13 @@ namespace BrickRed.WebParts.Twitter
                     HyperLink hplnkJoinus = new HyperLink();
                     hplnkJoinus.Text = "Follow Us";
                     hplnkJoinus.ForeColor = Color.White;
-                    hplnkJoinus.NavigateUrl = "https://twitter.com/" + tweets[0].User.ScreenName;
+                    if (tweets.Count > 0)
+                    {
+                        hplnkJoinus.NavigateUrl = "https://twitter.com/" + tweets[0].User.ScreenName;
+                    }
                     hplnkJoinus.Attributes.Add("target", "_blank");
                     tcHF.Controls.Add(hplnkJoinus);
-                    tcHF.CssClass = "padding-align-right";
+                    tcHF.CssClass = "padding-align-right , twitFooterBorder";
                     trHF.Cells.Add(tcHF);
                     trHF.Cells.Add(tcHF);
                 }
@@ -178,7 +184,8 @@ namespace BrickRed.WebParts.Twitter
             {
                 int followersCount = Convert.ToInt32(twitterResponse.ResponseObject.Count);
                 Label lblDisplayFollowerCount = new Label();
-                lblDisplayFollowerCount.Text = followersCount + " people are following ";
+                lblDisplayFollowerCount.Text = " has " + followersCount + " followers ";
+                lblDisplayFollowerCount.ForeColor = Color.Black;
 
                 Label lblScreenName = new Label();
                 lblScreenName.Text = "@" + tweets[0].User.Name;
@@ -186,8 +193,8 @@ namespace BrickRed.WebParts.Twitter
                 lblScreenName.Font.Size = FontUnit.XXSmall;
                 lblScreenName.ForeColor = Color.Black;
 
-                tc.Controls.Add(lblDisplayFollowerCount);
                 tc.Controls.Add(lblScreenName);
+                tc.Controls.Add(lblDisplayFollowerCount);
             }
             #endregion
 
@@ -204,6 +211,10 @@ namespace BrickRed.WebParts.Twitter
 
                 Label lblDisplayFollowerCount = new Label();
                 lblDisplayFollowerCount.Text = " is following " + followCount + " people";
+                lblDisplayFollowerCount.ForeColor = Color.Black;
+
+                tc.Controls.Add(lblScreenName);
+                tc.Controls.Add(lblDisplayFollowerCount);
             }
             #endregion
 
@@ -214,30 +225,5 @@ namespace BrickRed.WebParts.Twitter
             return tb;
         }
 
-        /// <summary>
-        /// To get the HTML Code
-        /// </summary>
-        /// <param name="cntrl"></param>
-        /// <returns></returns>
-
-        public static string GetHtmlCode(Table cntrl)
-        {
-            StringBuilder sb = new StringBuilder();
-            StringWriter tw = new StringWriter(sb);
-            HtmlTextWriter hw = new HtmlTextWriter(tw);
-
-            //Method2
-            //using(StringWriter sw = new StringWriter(CultureInfo.InvariantCulture)) {
-            //using(HtmlTextWriter writer = new HtmlTextWriter(sw))
-            //    control.RenderControl(writer);
-            //sw.WriteLine();
-            //return sw.ToString();
-
-
-            //System.IO.StringWriter sw = new System.IO.StringWriter();
-            //HtmlTextWriter hw = new HtmlTextWriter(sw);
-            cntrl.RenderControl(hw);
-            return sb.ToString();
-        }
     }
 }
