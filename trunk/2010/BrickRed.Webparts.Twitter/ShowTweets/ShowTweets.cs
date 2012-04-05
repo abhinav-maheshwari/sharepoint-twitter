@@ -582,6 +582,19 @@ namespace BrickRed.Webparts.Twitter
             {
                 imgbtnNext.Visible = false;
                 imgNoTweet.Visible = true;
+
+                tr = new TableRow();
+                mainTable.Rows.Add(tr);
+
+                tc = new TableCell();
+                tc.Width = Unit.Percentage(100);
+                tc.CssClass = "ms-vb2";
+                tc.HorizontalAlign = HorizontalAlign.Center;
+                tc.ForeColor = Color.Gray;
+                tr.Cells.Add(tc);
+
+                tc.Text = string.Format("{0} hasn't tweeted yet.", this.ScreenName);
+
             }
             // if the number of tweet response is less than the number of tweets demanded than there are no more tweets : show grey tweet
             if (tweets.Count < this.TweetCount * PageNumber)

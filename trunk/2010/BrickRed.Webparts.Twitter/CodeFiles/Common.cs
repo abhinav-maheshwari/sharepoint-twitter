@@ -1,4 +1,27 @@
-﻿using System;
+﻿/*
+ ===========================================================================
+ Copyright (c) 2010 BrickRed Technologies Limited
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sub-license, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ===========================================================================
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,7 +84,10 @@ namespace BrickRed.Webparts.Twitter
                     image.Width = 35;
                     image.Border = 0;
                     HyperLink hplnkImage = new HyperLink();
-                    hplnkImage.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                    if (tweets.Count > 0)
+                    {
+                        hplnkImage.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                    }
                     hplnkImage.Attributes.Add("target", "_blank");
                     hplnkImage.Controls.Add(image);
                     tcinner.Controls.Add(hplnkImage);
@@ -73,8 +99,11 @@ namespace BrickRed.Webparts.Twitter
                 //Creating the name hyperlink in header
                 tcinner = new TableCell();
                 HyperLink hplnkName = new HyperLink();
-                hplnkName.Text = tweets[0].User.Name;
-                hplnkName.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                if (tweets.Count > 0)
+                {
+                    hplnkName.Text = tweets[0].User.Name;
+                    hplnkName.NavigateUrl = "http://twitter.com/" + tweets[0].User.ScreenName;
+                }
                 hplnkName.Attributes.Add("target", "_blank");
                 tcinner.Controls.Add(hplnkName);
                 tcinner.VerticalAlign = VerticalAlign.Middle;
@@ -98,7 +127,7 @@ namespace BrickRed.Webparts.Twitter
                 tcHF.CssClass = "twitHeaderBorder";
                 trHF.Cells.Add(tcHF);
 
-              
+
             }
             #endregion
 
@@ -119,7 +148,10 @@ namespace BrickRed.Webparts.Twitter
                     HyperLink hplnkJoinus = new HyperLink();
                     hplnkJoinus.Text = "Follow Us";
                     hplnkJoinus.ForeColor = Color.White;
-                    hplnkJoinus.NavigateUrl = "https://twitter.com/" + tweets[0].User.ScreenName;
+                    if (tweets.Count > 0)
+                    {
+                        hplnkJoinus.NavigateUrl = "https://twitter.com/" + tweets[0].User.ScreenName;
+                    }
                     hplnkJoinus.Attributes.Add("target", "_blank");
                     tcHF.Controls.Add(hplnkJoinus);
                     tcHF.CssClass = "padding-align-right , twitFooterBorder";
@@ -131,7 +163,7 @@ namespace BrickRed.Webparts.Twitter
             }
             #endregion
 
-            
+
             tbHF.Rows.Add(trHF);
             return tbHF;
         }
@@ -195,6 +227,6 @@ namespace BrickRed.Webparts.Twitter
 
             return tb;
         }
-               
+
     }
 }
