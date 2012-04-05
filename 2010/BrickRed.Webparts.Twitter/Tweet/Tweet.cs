@@ -40,13 +40,10 @@ namespace BrickRed.Webparts.Twitter
     [ToolboxItemAttribute(false)]
     public class Tweet : Microsoft.SharePoint.WebPartPages.WebPart
     {
-        Label LblMessage;
         TextBox textTweet;
         Label lblTweets;
         Table mainTable;
-        Stopwatch sw = new Stopwatch();
-        TwitterResponse<TwitterStatusCollection> userInfo = null;
-
+        Label LblMessage;
         #region Webpart Properties
         [WebBrowsable(true),
         Category("Twitter Settings"),
@@ -181,14 +178,12 @@ namespace BrickRed.Webparts.Twitter
 
         #endregion
 
-
         public Tweet()
         {
         }
 
         protected override void CreateChildControls()
         {
-            sw.Start();
             base.CreateChildControls();
 
             //if (!this.Page.IsPostBack)
@@ -210,7 +205,7 @@ namespace BrickRed.Webparts.Twitter
             {
                 tr = new TableRow();
                 tc = new TableCell();
-                tc.ColumnSpan = 2;
+                tc.ColumnSpan = 3;
                 tc.Controls.Add(CreateHeaderFooter("Header"));
                 tr.Cells.Add(tc);
                 mainTable.Rows.Add(tr);
@@ -220,7 +215,7 @@ namespace BrickRed.Webparts.Twitter
             tr = new TableRow();
             mainTable.Rows.Add(tr);
             tc = new TableCell();
-            tc.ColumnSpan = 2;
+            tc.ColumnSpan = 3;
             tr.Cells.Add(tc);
 
             //Create Div for placing the textbox
@@ -242,8 +237,18 @@ namespace BrickRed.Webparts.Twitter
             //Adding the Tweet Button
             tr = new TableRow();
             mainTable.Rows.Add(tr);
+
+            //message cell
+
             tc = new TableCell();
-            tc.Width = Unit.Percentage(100);
+            tr.Cells.Add(tc);
+            LblMessage = new Label();
+            tc.Width = Unit.Percentage(50);
+            tc.Controls.Add(LblMessage);
+
+            //tweet button cell
+            tc = new TableCell();
+            tc.Width = Unit.Percentage(90);
             tc.HorizontalAlign = HorizontalAlign.Right;
             buttonTweet = new ImageButton();
             buttonTweet.ImageUrl = "/_layouts/Images/BrickRed/TweetButton.png";
@@ -267,7 +272,7 @@ namespace BrickRed.Webparts.Twitter
             {
                 tr = new TableRow();
                 tc = new TableCell();
-                tc.ColumnSpan = 2;
+                tc.ColumnSpan = 3;
                 tc.Controls.Add(CreateHeaderFooter("Footer"));
                 tr.Cells.Add(tc);
                 mainTable.Rows.Add(tr);
@@ -292,15 +297,7 @@ namespace BrickRed.Webparts.Twitter
                     && !string.IsNullOrEmpty(this.AccessToken)
                     && !string.IsNullOrEmpty(this.AccessTokenSecret))
                 {
-                    if (userInfo == null)
-                    {
-                        OAuthTokens tokens = new OAuthTokens();
-                        tokens.ConsumerKey = this.ConsumerKey;
-                        tokens.ConsumerSecret = this.ConsumerSecret;
-                        tokens.AccessToken = this.AccessToken;
-                        tokens.AccessTokenSecret = this.AccessTokenSecret;
-                        userInfo = TwitterTimeline.UserTimeline(tokens);
-                    }
+                    TwitterResponse<TwitterStatusCollection> userInfo = GetTwitterStatus();
 
                     if (userInfo.ResponseObject.Count < 10000)
                     {
@@ -318,9 +315,8 @@ namespace BrickRed.Webparts.Twitter
             }
             catch (Exception Ex)
             {
-                LblMessage = new Label();
                 LblMessage.Text = Ex.Message;
-                this.Controls.Add(LblMessage);
+                LblMessage.ForeColor = Color.Red;
             }
         }
 
@@ -334,13 +330,24 @@ namespace BrickRed.Webparts.Twitter
                 tokens.AccessToken = this.AccessToken;
                 tokens.AccessTokenSecret = this.AccessTokenSecret;
 
-                TwitterStatus.Update(tokens, textTweet.Text.Trim());
+                TwitterResponse<TwitterStatus> Response = TwitterStatus.Update(tokens, textTweet.Text.Trim());
+                if (Response.Result == RequestResult.Success)
+                {
+                    LblMessage.Text = "Message tweeted sucessfully!!!";
+                    LblMessage.ForeColor = Color.Green;
+                }
+                else
+                {
+                    LblMessage.Text = Response.ErrorMessage;
+                    LblMessage.ForeColor = Color.Red;
+
+                }
             }
             catch (Exception Ex)
             {
-                Label LblMessage = new Label();
                 LblMessage.Text = Ex.Message;
-                this.Controls.Add(LblMessage);
+                LblMessage.ForeColor = Color.Red;
+
             }
         }
 
@@ -363,33 +370,7 @@ namespace BrickRed.Webparts.Twitter
                 && !string.IsNullOrEmpty(this.AccessToken)
                 && !string.IsNullOrEmpty(this.AccessTokenSecret))
             {
-                if (userInfo == null)
-                {
-                    //use cache here
-                    if (Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] == null)
-                    {
-
-                        //create a authorization token of the user
-                        OAuthTokens tokens = new OAuthTokens();
-                        tokens.ConsumerKey = this.ConsumerKey;
-                        tokens.ConsumerSecret = this.ConsumerSecret;
-                        tokens.AccessToken = this.AccessToken;
-                        tokens.AccessTokenSecret = this.AccessTokenSecret;
-
-                        //Set the query options
-
-                        UserTimelineOptions Useroptions = new UserTimelineOptions();
-                        Useroptions.ScreenName = this.ScreenName;
-
-                        //Get the account info
-                        userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
-                        HttpContext.Current.Cache.Insert(string.Format("TweetWrite-{0}", this.ScreenName), userInfo, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
-                    }
-                    else
-                    {
-                        userInfo = Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] as TwitterResponse<TwitterStatusCollection>;
-                    }
-                }
+                TwitterResponse<TwitterStatusCollection> userInfo = GetTwitterStatus();
 
                 #region Header
                 if (Type.Equals("Header"))
@@ -406,6 +387,37 @@ namespace BrickRed.Webparts.Twitter
                 #endregion
             }
             return tbHF;
+        }
+
+        private TwitterResponse<TwitterStatusCollection> GetTwitterStatus()
+        {
+            TwitterResponse<TwitterStatusCollection> userInfo = new TwitterResponse<TwitterStatusCollection>();
+
+            //use cache here
+            if (Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] == null)
+            {
+                //create a authorization token of the user
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
+
+                //Set the query options
+
+                UserTimelineOptions Useroptions = new UserTimelineOptions();
+                Useroptions.ScreenName = this.ScreenName;
+
+                //Get the account info
+                userInfo = TwitterTimeline.UserTimeline(tokens, Useroptions);
+                HttpContext.Current.Cache.Insert(string.Format("TweetWrite-{0}", this.ScreenName), userInfo, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+            }
+            else
+            {
+                userInfo = Page.Cache[string.Format("TweetWrite-{0}", this.ScreenName)] as TwitterResponse<TwitterStatusCollection>;
+            }
+
+            return userInfo;
         }
     }
 }
