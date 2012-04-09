@@ -49,8 +49,6 @@ namespace BrickRed.WebParts.Twitter
         string ImagePath = SPContext.Current.Web.Url + "/_layouts/Brickred.OpenSource.Twitter/";
         HiddenField objPageCount;
         string PageCountValue = string.Empty;
-        TwitterResponse<TwitterStatusCollection> userTimeline;
-        Label objPageValueCount;
 
         #endregion
 
@@ -200,6 +198,7 @@ namespace BrickRed.WebParts.Twitter
         protected override void OnLoad(EventArgs e)
         {
             //Creates the hidden field for keeping the page info
+            //if(!Page.IsPostBack)
             CreateHiddenField();
 
             //Get the Css Class
@@ -255,8 +254,8 @@ namespace BrickRed.WebParts.Twitter
                 int count = 0;
                 foreach (string key in HttpContext.Current.Request.Form.AllKeys)
                 {
-                    string keyId = key.Replace("$", "_");
-                    if (keyId.Equals(ViewState["objPageCountId"].ToString()))
+                    string keyid = key.Replace("$", "_");
+                    if (keyid.Equals(ViewState["objPageCountId"].ToString()))
                     {
                         break;
                     }
@@ -267,10 +266,6 @@ namespace BrickRed.WebParts.Twitter
                     pagenumber = HttpContext.Current.Request.Form[count];
                 }
                 catch
-                {
-                    pagenumber = "1";
-                }
-                if (string.IsNullOrEmpty(pagenumber))
                 {
                     pagenumber = "1";
                 }
@@ -320,12 +315,12 @@ namespace BrickRed.WebParts.Twitter
             //add tweet table here
             tcContent.Controls.Add(CreateTweetTable(PageNumber, tweets));
 
-            
+
             trContent.Controls.Add(tcContent);
             Maintable.Controls.Add(trContent);
 
             tcpaging.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
-             tcpaging.ID = "tcPaging";
+            tcpaging.ID = "tcPaging";
             tcpaging.Controls.Add(imgMoreTweet);        //Add the blue tweet bird
             tcpaging.Controls.Add(imgNoTweet);          //Add the grey tweet bird
             trpaging.Cells.Add(tcpaging);
@@ -351,17 +346,17 @@ namespace BrickRed.WebParts.Twitter
             if (Page.Cache[string.Format("Tweet-{0}", PageNumber)] == null)
             {
                 //set the tokens here
-            OAuthTokens tokens = new OAuthTokens();
-            tokens.ConsumerKey = this.ConsumerKey;
-            tokens.ConsumerSecret = this.ConsumerSecret;
-            tokens.AccessToken = this.AccessToken;
-            tokens.AccessTokenSecret = this.AccessTokenSecret;
+                OAuthTokens tokens = new OAuthTokens();
+                tokens.ConsumerKey = this.ConsumerKey;
+                tokens.ConsumerSecret = this.ConsumerSecret;
+                tokens.AccessToken = this.AccessToken;
+                tokens.AccessTokenSecret = this.AccessTokenSecret;
 
 
-            UserTimelineOptions options = new UserTimelineOptions();
-            options.Count = this.TweetCount * PageNumber;
+                UserTimelineOptions options = new UserTimelineOptions();
+                options.Count = this.TweetCount * PageNumber;
                 options.Page = 1;
-            options.ScreenName = this.ScreenName;
+                options.ScreenName = this.ScreenName;
 
 
                 //now hit the twitter and get the response
@@ -664,7 +659,7 @@ namespace BrickRed.WebParts.Twitter
         /// </summary>
         private void CreateHiddenField()
         {
-
+            //Create the hidden control and update the value accordingly
             objPageCount = new HiddenField();
             if (string.IsNullOrEmpty(PageCountValue))
                 objPageCount.Value = "1";
@@ -672,6 +667,8 @@ namespace BrickRed.WebParts.Twitter
                 objPageCount.Value = PageCountValue;
 
             this.Controls.Add(objPageCount);
+
+
         }
 
         /// <summary>
@@ -688,20 +685,19 @@ namespace BrickRed.WebParts.Twitter
                      !string.IsNullOrEmpty(this.AccessToken) &&
                      !string.IsNullOrEmpty(this.AccessTokenSecret))
             {
-                if (ViewState["objPageCountId"] == null)
+                if (objPageCount == null)
                 {
-                    if (objPageCount == null)
-                    {
-                        CreateHiddenField();
-                    }
-
-                    ViewState["objPageCountId"] = objPageCount.ClientID;
+                    CreateHiddenField();
                 }
+
+
+                //Update the hidden control Id to the viewstate
+                ViewState["objPageCountId"] = objPageCount.ClientID;
 
                 scriptHideImageonLoad = @"<script language='javascript' type='text/javascript'>
                                                     function HideImage(id)
                                                      {
-                                                        document.getElementById('" + ViewState["objPageCountId"] + @"').value = id;
+                                                        document.getElementById('" + objPageCount.ClientID + @"').value = id;
                                                      }
                                                     </script>";
 
