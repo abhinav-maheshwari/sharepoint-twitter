@@ -441,7 +441,7 @@ namespace BrickRed.Webparts.Twitter
                     innerTable.CssClass = "ms-viewlsts";
                     innerTable.Width = Unit.Percentage(100);
 
-                    if ( i <= this.TweetCount * PageNumber)
+                    if (i <= this.TweetCount * PageNumber)
                     {
                         tr = new TableRow();
                         mainTable.Rows.Add(tr);
@@ -742,8 +742,13 @@ namespace BrickRed.Webparts.Twitter
                                                      }
                                                     </script>";
                 }
+
                 this.Page.ClientScript.RegisterStartupScript(this.GetType(), "scriptHideImageonLoad", scriptHideImageonLoad);
-                imgbtnNext.OnClientClick = "javascript:HideImage('" + Convert.ToString(Convert.ToInt32(objPageCount.Value) + 1) + "');";
+
+                if (imgbtnNext != null)
+                {
+                    imgbtnNext.OnClientClick = "javascript:HideImage('" + Convert.ToString(Convert.ToInt32(objPageCount.Value) + 1) + "');";
+                }
             }
             base.OnPreRender(e);
         }
