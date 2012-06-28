@@ -343,7 +343,7 @@ namespace BrickRed.WebParts.Twitter
             TwitterStatusCollection tweets = new TwitterStatusCollection();
 
             //cache the tweets here
-            if (Page.Cache[string.Format("Tweet-{0}", PageNumber)] == null)
+            if (Page.Cache[string.Format("Tweet-{0}-{1}", PageNumber,this.ScreenName)] == null)
             {
                 //set the tokens here
                 OAuthTokens tokens = new OAuthTokens();
@@ -364,16 +364,16 @@ namespace BrickRed.WebParts.Twitter
 
                 if (PageNumber == 1)
                 {
-                    HttpContext.Current.Cache.Add(string.Format("Tweet-{0}", PageNumber), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, CacheRemovedCallBack);
+                    HttpContext.Current.Cache.Add(string.Format("Tweet-{0}-{1}", PageNumber, this.ScreenName), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, CacheRemovedCallBack);
                 }
                 else
                 {
-                    HttpContext.Current.Cache.Insert(string.Format("Tweet-{0}", PageNumber), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
+                    HttpContext.Current.Cache.Insert(string.Format("Tweet-{0}-{1}", PageNumber, this.ScreenName), tweets, null, DateTime.Now.AddMinutes(Common.CACHEDURATION), TimeSpan.Zero, System.Web.Caching.CacheItemPriority.Normal, null);
                 }
             }
             else
             {
-                tweets = HttpContext.Current.Cache[string.Format("Tweet-{0}", PageNumber)] as TwitterStatusCollection;
+                tweets = HttpContext.Current.Cache[string.Format("Tweet-{0}-{1}", PageNumber, this.ScreenName)] as TwitterStatusCollection;
             }
 
             return tweets;
@@ -583,14 +583,14 @@ namespace BrickRed.WebParts.Twitter
         {
             int counter = 1;
             // If my first page cache is removed then remove all the other caches also
-            if (key.Equals(string.Format("Tweet-{0}", counter)))
+            if (key.Equals(string.Format("Tweet-{0}-{1}", counter, this.ScreenName)))
             {
                 while (true)
                 {
                     counter++;
-                    if (HttpContext.Current.Cache.Get(string.Format("Tweet-{0}", counter)) != null)
+                    if (HttpContext.Current.Cache.Get(string.Format("Tweet-{0}-{1}", counter, this.ScreenName)) != null)
                     {
-                        HttpContext.Current.Cache.Remove(string.Format("Tweet-{0}", counter));
+                        HttpContext.Current.Cache.Remove(string.Format("Tweet-{0}-{1}", counter, this.ScreenName));
                     }
                     else
                     {
@@ -702,7 +702,10 @@ namespace BrickRed.WebParts.Twitter
                                                     </script>";
 
                 this.Page.ClientScript.RegisterStartupScript(this.GetType(), "scriptHideImageonLoad", scriptHideImageonLoad);
-                imgMoreTweet.OnClientClick = "javascript:HideImage('" + Convert.ToString(Convert.ToInt32(objPageCount.Value) + 1) + "');";
+				if(imgMoreTweet != null)
+				{
+					imgMoreTweet.OnClientClick = "javascript:HideImage('" + Convert.ToString(Convert.ToInt32(objPageCount.Value) + 1) + "');";
+				}
             }
             base.OnPreRender(e);
         }
